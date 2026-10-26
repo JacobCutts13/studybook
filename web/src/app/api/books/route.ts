@@ -1,14 +1,10 @@
-import { join } from "node:path";
-import { createBook, DATA_DIR, listBooks, readJson } from "@/lib/books";
+import { createBook, isPdf, listBooks, savedProfile } from "@/lib/books";
 
 const MAX_BYTES = 300 * 1024 * 1024;
 
 export async function GET() {
-  const saved = await readJson<{ profile: string }>(
-    join(DATA_DIR, "profile.json"),
-  );
   return Response.json({
-    profile: saved?.profile ?? "",
+    profile: await savedProfile(),
     books: await listBooks(),
   });
 }
@@ -35,7 +31,7 @@ export async function POST(request: Request) {
       { status: 413 },
     );
   const pdf = Buffer.from(await file.arrayBuffer());
-  if (pdf.subarray(0, 5).toString("latin1") !== "%PDF-")
+  if (!isPdf(pdf))
     return Response.json({ error: "That file isn’t a PDF." }, { status: 400 });
   const id = await createBook(pdf, file.name.slice(0, 200), profile);
   return Response.json({ id }, { status: 201 });

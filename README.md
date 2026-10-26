@@ -8,7 +8,15 @@ Turn a book PDF into a study guide. For every chapter you get:
 
 **My notes** collects every highlight across the book.
 
-The guide is written by your own [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) login (subscription or API key). The app runs on your computer at `localhost:3000`, and your PDF stays there.
+The guide is written by your own [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) login (subscription or API key). It runs on your computer at http://127.0.0.1:4747, and your PDF stays there.
+
+## Let your agent set it up
+
+Paste this into Claude Code (or any coding agent on a machine where Claude Code is logged in):
+
+> Install studybook from https://github.com/JacobCutts13/studybook and follow its AGENTS.md. Make study guides for the book PDFs in ~/Downloads that I name: `<book.pdf>`. Write the "about" from what you know about my work, then give me the links to read them.
+
+The agent runs everything from the command line (see [AGENTS.md](AGENTS.md)), so it never has to click through the UI. A 120-page book takes about 4 minutes.
 
 ## Quick start
 
@@ -23,15 +31,35 @@ Requirements:
 git clone https://github.com/JacobCutts13/studybook
 cd studybook
 pnpm install
-pnpm dev
 ```
 
-Open http://localhost:3000, choose a PDF, say a sentence or two about what you do, and press **Make study guide**. Each chapter takes a minute or two. You can watch progress in the library and start studying when it says **Ready to study**.
+### From the command line
+
+```bash
+pnpm studybook add ~/Downloads/the-mom-test.pdf --about "I'm a product manager at a B2B software company."
+pnpm studybook serve
+```
+
+`add` prints a line as each book moves through its phases and ends with the link to read it. You can pass several PDFs at once. The commands:
+
+| Command | What it does |
+| --- | --- |
+| `add <pdf…> [--about "…"]` | Makes study guides and waits for them. `--about` is remembered for next time. |
+| `wait <id>` | Follows a book that's still being written. |
+| `retry <id>` | Resumes a stopped book, redoing only what's missing. |
+| `status [--json]` | Lists books with their status and links. |
+| `serve` | Starts the reader, or says so if it's already running. |
+
+Add `--no-wait` to `add` or `retry` to return straight away. Each command exits 1 with a clear message if something goes wrong.
+
+### In the browser
+
+Run `pnpm dev`, open http://127.0.0.1:4747, choose a PDF, say a sentence or two about what you do, and press **Make study guide**. The library shows each chapter's progress, and **Study** appears when it's ready.
 
 ## How it works
 
 ```
-localhost:3000  ──upload──▶  ~/.studybook/books/<id>/book.pdf
+web upload or `studybook add`  ──▶  ~/.studybook/books/<id>/book.pdf
                                    │
                          local/worker.mjs (detached)
                                    │
@@ -62,6 +90,7 @@ Each step runs `claude -p` inside the book's folder with these settings:
 | `STUDYBOOK_MODEL` | `opus` | Claude Code model alias. `sonnet` uses less of your plan. |
 | `STUDYBOOK_CONCURRENCY` | `2` | Chapters written at the same time. |
 | `STUDYBOOK_DATA` | `~/.studybook` | Where books, notes and progress are stored. |
+| `STUDYBOOK_PORT` | `4747` | Port for the reader. |
 | `STUDYBOOK_CLAUDE_COMMAND` | `claude` | Path to Claude Code if it isn't on `PATH`. |
 
 A 15-chapter book is about 16 Claude runs.

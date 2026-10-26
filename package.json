@@ -13,7 +13,8 @@
     "test": "node --test local/*.test.mjs",
     "e2e": "node --test e2e/*.test.mjs",
     "fixture": "node local/fixtures/make-sample.mjs",
-    "e2e:setup": "playwright-core install chromium-headless-shell"
+    "e2e:setup": "playwright-core install chromium-headless-shell",
+    "studybook": "node local/cli.mjs"
   },
   "dependencies": {
     "pdfjs-dist": "3.11.174"
@@ -25,5 +26,8 @@
   },
   "engines": {
     "node": ">=24.0.0"
+  },
+  "bin": {
+    "studybook": "local/cli.mjs"
   }
 }
