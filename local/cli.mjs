@@ -2,7 +2,7 @@
 // studybook from the command line, for people and agents alike. Every command
 // prints plain progress lines and ends with a URL or a clear error.
 import { spawn } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, rm } from "node:fs/promises";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
@@ -10,16 +10,20 @@ import {
   BASE_URL,
   bookDir,
   createBook,
+  DATA_DIR,
   isPdf,
   listBooks,
   PORT,
+  readJson,
   readState,
   savedProfile,
   startWorker,
+  writeJson,
 } from "./books.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const WORKER = join(HERE, "worker.mjs");
+const SERVER_FILE = join(DATA_DIR, `server-${PORT}.json`);
 const USAGE = `Usage: pnpm studybook <command>
 
   add <pdf...> [--about "what you do"]   Make study guides and wait for them
@@ -27,6 +31,7 @@ const USAGE = `Usage: pnpm studybook <command>
   retry <id>                             Resume a stopped book
   status [--json]                        List books
   serve                                  Start the reader at ${BASE_URL}
+  stop                                   Stop the reader that serve started
 
 Add --no-wait to add or retry to return straight away. Set STUDYBOOK_MODEL=sonnet to use less of your plan.`;
 
@@ -161,9 +166,38 @@ async function serve() {
       stdio: "inherit",
     },
   );
-  for (let i = 0; i < 120 && !(await serverUp()); i++) await sleep(500);
+  // Stopping serve stops the reader too, and `stop` can find it by port.
+  for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"])
+    process.on(signal, () => child.kill(signal));
+  await mkdir(DATA_DIR, { recursive: true });
+  await writeJson(SERVER_FILE, { pid: process.pid, port: PORT });
+  const exited = new Promise((done) => child.once("exit", done));
+  let stopped = false;
+  exited.then(() => (stopped = true));
+  for (let i = 0; i < 120 && !stopped && !(await serverUp()); i++)
+    await sleep(500);
+  if (stopped || !(await serverUp())) {
+    child.kill();
+    await rm(SERVER_FILE, { force: true });
+    throw new Error("The reader didn't start. See the message above.");
+  }
   console.log(`studybook is running at ${BASE_URL}`);
-  await new Promise((done) => child.once("exit", done));
+  await exited;
+  await rm(SERVER_FILE, { force: true });
+  return true;
+}
+
+// Stops only the reader that `serve` started on this port.
+async function stop() {
+  const server = await readJson(SERVER_FILE);
+  if (!server || !(await serverUp())) {
+    await rm(SERVER_FILE, { force: true });
+    console.log(`The reader isn't running on port ${PORT}.`);
+    return true;
+  }
+  process.kill(server.pid, "SIGTERM");
+  for (let i = 0; i < 40 && (await serverUp()); i++) await sleep(250);
+  console.log(`Stopped the reader on port ${PORT}.`);
   return true;
 }
 
@@ -184,6 +218,7 @@ const COMMANDS = {
   retry: () => retry(rest[0], wait),
   status: () => status(values.json),
   serve,
+  stop,
 };
 try {
   const run = COMMANDS[command];

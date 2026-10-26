@@ -49,6 +49,7 @@ pnpm studybook serve
 | `retry <id>` | Resumes a stopped book, redoing only what's missing. |
 | `status [--json]` | Lists books with their status and links. |
 | `serve` | Starts the reader, or says so if it's already running. |
+| `stop` | Stops the reader that `serve` started on this port. |
 
 Add `--no-wait` to `add` or `retry` to return straight away. Each command exits 1 with a clear message if something goes wrong.
 

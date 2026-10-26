@@ -32,8 +32,11 @@ http://127.0.0.1:4747. Everything is driven from the command line; you never nee
      a usage limit on the user's plan; tell them if retries keep failing.
    - **If you lose track of a run**, `pnpm studybook status --json` lists every book with its
      status and URL, and `pnpm studybook wait <id>` follows one that's still being written.
-6. **Start the reader** in the background: `pnpm studybook serve`. If it's already running, it
-   just says so.
+6. **Start the reader** in the background: `pnpm studybook serve`, and **leave it running**,
+   because the user reads at that address. If it's already running, it just says so. If you
+   ever need to stop it, use `pnpm studybook stop`, which stops only the reader on
+   `STUDYBOOK_PORT`. Never stop it with `pkill` or a name pattern: that also kills other
+   people's studybook and Next servers on the machine.
 7. **Give the user the URLs** from the `Ready:` lines. Mention that the reader works while
    `serve` is running, and that their highlights and notes are saved in `~/.studybook`.
 
