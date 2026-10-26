@@ -120,8 +120,17 @@ test("study every chapter, take every quiz, keep a highlight", async () => {
     route.request().url().startsWith(base) ? route.continue() : route.abort(),
   );
   try {
+    // Landing: the particle book and the two ways in.
     await page.goto(base);
-    await page.getByRole("link", { name: "Study" }).click();
+    await page.locator(".particle-book canvas").waitFor();
+    await page.getByRole("link", { name: "Create" }).waitFor();
+    await page.getByRole("link", { name: /^Library/ }).click();
+    await page.waitForURL("**/library");
+    // Exact, or it also matches the "← studybook" back link.
+    await page
+      .getByRole("link", { name: "Study", exact: true })
+      .first()
+      .click();
     await page.waitForURL(`**/books/${book.id}*`);
     await page.locator("#reader:not([hidden])").waitFor({ state: "attached" });
 

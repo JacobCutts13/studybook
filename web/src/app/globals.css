@@ -1,5 +1,6 @@
-/* Colours: Radix Colors (MIT, github.com/radix-ui/colors), mauve / indigo /
-   green / red / amber. Components follow common product-UI specs: 32px
+/* Colours: Radix Colors (MIT, github.com/radix-ui/colors). Black and white
+   (mauve), with green / red only for quiz feedback and amber for highlights
+   on the page. Components follow common product-UI specs: 32px
    controls, 6px radii, 14/20 body text. */
 :root {
   --bg-1: #ffffff;
@@ -18,12 +19,12 @@
   --text-1: #211f26;
   --text-2: #65636d;
   --icon: #8e8c99;
-  --accent: #3e63dd;
-  --accent-text: #3a5bc7;
-  --accent-fill: #edf2fe;
-  --accent-border: #c1d0ff;
-  --focus: #3358d4;
-  --mark: #ffee9c;
+  --accent: #211f26;
+  --accent-text: #211f26;
+  --accent-fill: #eae7ec;
+  --accent-border: #d0cdd7;
+  --focus: #211f26;
+  --mark: #e3dfe6;
   --mark-solid: #ffc53d;
   --good-text: #218358;
   --good-fill: #e6f6eb;
@@ -73,12 +74,12 @@
     --text-1: #eeeef0;
     --text-2: #b5b2bc;
     --icon: #7c7a85;
-    --accent: #3e63dd;
-    --accent-text: #9eb1ff;
-    --accent-fill: #182449;
-    --accent-border: #304384;
-    --focus: #5472e4;
-    --mark: #3f2700;
+    --accent: #eeeef0;
+    --accent-text: #eeeef0;
+    --accent-fill: #2b292d;
+    --accent-border: #49474e;
+    --focus: #eeeef0;
+    --mark: #3c393f;
     --mark-solid: #ffc53d;
     --good-text: #3dd68c;
     --good-fill: #132d21;
@@ -120,12 +121,12 @@
   --text-1: #eeeef0;
   --text-2: #b5b2bc;
   --icon: #7c7a85;
-  --accent: #3e63dd;
-  --accent-text: #9eb1ff;
-  --accent-fill: #182449;
-  --accent-border: #304384;
-  --focus: #5472e4;
-  --mark: #3f2700;
+  --accent: #eeeef0;
+  --accent-text: #eeeef0;
+  --accent-fill: #2b292d;
+  --accent-border: #49474e;
+  --focus: #eeeef0;
+  --mark: #3c393f;
   --mark-solid: #ffc53d;
   --good-text: #3dd68c;
   --good-fill: #132d21;
@@ -424,4 +425,135 @@ details ul {
   margin-bottom: 4px;
   color: var(--text-1);
   font-weight: var(--bold);
+}
+
+/* Landing: the particle book fills the screen, copy sits over it */
+.hero {
+  position: relative;
+  max-width: none;
+  height: 100dvh;
+  min-height: 560px;
+  padding: 0;
+  overflow: hidden;
+  background: var(--bg-2);
+}
+.particle-book {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+  touch-action: none;
+}
+.particle-book:active {
+  cursor: grabbing;
+}
+.particle-book canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.hero-copy {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  padding: 0 24px 56px;
+  text-align: center;
+  pointer-events: none;
+}
+.hero-copy h1 {
+  font-size: 40px;
+  line-height: 48px;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+.hero-lede {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--text-2);
+  font-size: 16px;
+  line-height: 24px;
+  text-wrap: balance;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  pointer-events: auto;
+}
+.hero-hint {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 16px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-hint {
+    display: none;
+  }
+}
+
+/* Large button */
+.btn.large {
+  height: 40px;
+  padding: 0 16px;
+  font-size: 14px;
+  line-height: 20px;
+  gap: 8px;
+}
+
+/* Page header */
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0 8px;
+}
+.page-head h1 {
+  margin: 0;
+}
+.page-head + .books,
+.page-head + .empty {
+  margin-top: 24px;
+}
+
+/* Back link */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 8px;
+  margin-left: -8px;
+  border-radius: 4px;
+  color: var(--text-1);
+  font-size: 12px;
+  font-weight: var(--bold);
+  text-decoration: none;
+  transition: background-color var(--base) ease-in-out;
+}
+.back:hover {
+  background: var(--fill-1);
+}
+.back .arrow {
+  display: inline-block;
+  transition: transform var(--base) ease-in-out;
+}
+.back:hover .arrow {
+  transform: translateX(-2px);
+}
+
+/* Badge (count) */
+.count {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: var(--fill-1);
+  color: var(--text-1);
+  font-size: 10px;
+  line-height: 1;
+  font-weight: var(--medium);
 }
