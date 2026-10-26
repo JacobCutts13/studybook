@@ -347,11 +347,6 @@ textarea::placeholder {
   grid-column: 2;
   grid-row: 1 / span 2;
 }
-.book > .chips,
-.book > details {
-  grid-column: 1 / -1;
-  margin-top: 8px;
-}
 .book-title {
   margin: 0;
   font-weight: var(--bold);
@@ -406,6 +401,11 @@ details {
 details ul {
   margin: 4px 0 0;
   padding-left: 16px;
+}
+.book > .chips,
+.book > details {
+  grid-column: 1 / -1;
+  margin-top: 8px;
 }
 /* Empty state */
 .empty {
