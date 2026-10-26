@@ -146,6 +146,16 @@ h3{font-size:14px;line-height:20px;font-weight:var(--bold);margin:24px 0 8px}
 .btn.quiet[aria-pressed="true"] .count{background:var(--bg-1)}
 .btn.bad{background:var(--bg-1);color:var(--bad-text);box-shadow:inset 0 0 0 1px var(--ring),var(--shadow-s)}
 .btn.bad:hover:not(:disabled){background:var(--bad-bg);box-shadow:inset 0 0 0 1px var(--bad-border)}
+/* Tertiary icon button */
+.iconbtn{appearance:none;position:relative;display:inline-grid;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:6px;background:none;color:var(--text-2);cursor:pointer;transition:background-color var(--base) ease-in-out,color var(--base) ease-in-out}
+.iconbtn:hover{background:var(--fill-2);color:var(--text-1)}
+.iconbtn:active{background:var(--fill-3)}
+/* Tooltip */
+.tip{position:absolute;top:calc(100% + 4px);right:0;z-index:10;display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:6px;background:var(--bg-1);color:var(--text-1);box-shadow:var(--shadow-m);font-size:12px;line-height:16px;font-weight:var(--medium);white-space:nowrap;opacity:0;visibility:hidden;pointer-events:none;transition:opacity var(--base) ease-in-out,visibility 0s linear var(--base)}
+.iconbtn:hover .tip,.iconbtn:focus-visible .tip{opacity:1;visibility:visible;transition-delay:150ms,150ms}
+.tip #notestip{margin-right:2px}
+/* Key caps */
+kbd{display:inline-grid;place-items:center;min-width:16px;height:16px;padding:0 2px;border:1px solid var(--border-1);border-radius:4px;background:var(--bg-1);color:var(--text-2);font:var(--bold) 10px/1 var(--font)}
 /* Text link */
 .linkbtn{appearance:none;background:none;border:0;padding:0;color:var(--text-1);font-weight:var(--bold);cursor:pointer;text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:.08em;text-decoration-color:color-mix(in srgb,currentColor 50%,transparent)}
 .linkbtn:hover{text-decoration-color:currentColor}
@@ -185,14 +195,14 @@ canvas{display:block}
 @media (max-width:700px){
   .pagenav-inner{grid-template-columns:auto 1fr auto;gap:8px}
   .pn-mid{justify-content:center}
-  .zoom,#notestoggle{display:none}
+  .zoom{display:none}
   .reader-scroll{padding:12px}
 }
 
 /* Notes beside the page (wide screens only) */
 .readnotes{width:320px;position:sticky;top:var(--bar-h);height:calc(100dvh - var(--bar-h));display:flex;flex-direction:column;background:var(--bg-1);border-left:1px solid var(--border-1)}
 .readnotes[hidden]{display:none}
-@media (max-width:1099px){.readnotes{display:none}#notestoggle{display:none}}
+@media (max-width:1099px){.readnotes,#notestoggle{display:none}}
 .rn-head{padding:12px 12px 12px 16px;border-bottom:1px solid var(--border-1)}
 .rn-head h3{margin:0}
 #rnlist{flex:1;overflow-y:auto;padding:16px}
@@ -281,6 +291,10 @@ textarea:focus-visible{border-radius:4px}
     <div class="bar-end">
       <label class="visually-hidden" for="chapsel">Chapter</label><select id="chapsel" class="chapsel"></select>
       <span class="chap-pick" id="overall">0 of 3 steps done</span>
+      <button class="iconbtn" id="notestoggle" aria-controls="readnotes" aria-pressed="true" aria-label="Notes in this chapter" hidden>
+        <svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><rect x="2.25" y="3.25" width="13.5" height="11.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M11.25 3.5v11" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span class="tip" role="tooltip"><span id="notestip">Hide notes</span><kbd>⌘</kbd><kbd>/</kbd></span>
+      </button>
     </div>
   </div>
 </header>
@@ -327,7 +341,6 @@ textarea:focus-visible{border-radius:4px}
             </div>
           </div>
           <div class="pn-end">
-            <button class="btn quiet" id="notestoggle" aria-controls="readnotes" aria-pressed="true">Chapter notes <span class="count" id="rncount"></span></button>
             <button class="btn" id="nextp">Next</button>
           </div>
         </div>
@@ -408,6 +421,7 @@ function show(id){
   });
   try { history.replaceState(null,'','#'+id); } catch(e){}
   window.scrollTo(0,0);
+  document.getElementById('notestoggle').hidden=id!=='read';
   if(id==='read') renderPage();
   if(id==='notes') renderNotes();
 }
@@ -506,6 +520,7 @@ function paintNotesPanel(){
   const open=S.notesOpen!==false;
   document.getElementById('readnotes').hidden=!open;
   document.getElementById('notestoggle').setAttribute('aria-pressed',open);
+  document.getElementById('notestip').textContent=open?'Hide notes':'Show notes';
 }
 function setNotesPanel(open){ S.notesOpen=open; save(); paintNotesPanel(); renderPage(); }
 document.getElementById('notestoggle').onclick=()=>setNotesPanel(S.notesOpen===false);
@@ -517,6 +532,7 @@ document.addEventListener('keydown',e=>{
   if((e.metaKey||e.ctrlKey)&&(e.key==='='||e.key==='+')){ e.preventDefault(); zoomBy(1); return; }
   if((e.metaKey||e.ctrlKey)&&e.key==='-'){ e.preventDefault(); zoomBy(-1); return; }
   if((e.metaKey||e.ctrlKey)&&e.key==='0'){ e.preventDefault(); zoomFit(); return; }
+  if((e.metaKey||e.ctrlKey)&&e.key==='/'){ e.preventDefault(); setNotesPanel(S.notesOpen===false); return; }
   if(e.key==='ArrowRight'&&S.page<END){S.page++;renderPage();toTop();}
   if(e.key==='ArrowLeft'&&S.page>START){S.page--;renderPage();toTop();}
 });
@@ -580,7 +596,6 @@ const byPosition=(a,b)=>a.page-b.page||((a.rects?a.rects[0].y:0)-(b.rects?b.rect
 function renderReadNotes(){
   const list=document.getElementById('rnlist');
   const items=NOTES.filter(n=>n.ch===S.ch).sort(byPosition);
-  document.getElementById('rncount').textContent=items.length||'';
   list.innerHTML='';
   if(!items.length){ list.innerHTML='<p class="rn-empty">Drag across a passage to highlight it. This chapter’s notes show up here.</p>'; return; }
   items.forEach(n=>{
