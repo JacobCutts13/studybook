@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Learn __BOOK_TITLE__</title>
+<link rel="stylesheet" href="/vendor/fonts/instrument-sans/latin-400.css">
+<link rel="stylesheet" href="/vendor/fonts/instrument-sans/latin-500.css">
+<link rel="stylesheet" href="/vendor/fonts/instrument-sans/latin-600.css">
+<link rel="stylesheet" href="/vendor/fonts/instrument-sans/latin-700.css">
+<link rel="stylesheet" href="/vendor/fonts/source-serif-4/latin-400.css">
+<link rel="stylesheet" href="/vendor/fonts/source-serif-4/latin-600.css">
+<link rel="stylesheet" href="/vendor/fonts/source-serif-4/latin-700.css">
+<link rel="stylesheet" href="/vendor/fonts/source-serif-4/latin-400-italic.css">
+<style>
+:root{
+  --paper:#EDF0F3; --surface:#FFFFFF; --ink:#1B2A38; --muted:#5A6877; --line:#CBD3DB;
+  --mark:#F3E45A; --good:#2E7A57; --good-bg:#E2F1E9; --bad:#B4443A; --bad-bg:#F7E4E1;
+  --accent:#2B5C8A; --accent-ink:#FFFFFF;
+  --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#121920; --surface:#1A232C; --ink:#E3E8ED; --muted:#9AA7B4; --line:#2E3A46;
+    --mark:#6E6421; --good:#5BBE8D; --good-bg:#183327; --bad:#E58A80; --bad-bg:#3A1F1C;
+    --accent:#7FB0E0; --accent-ink:#0E1A26; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121920; --surface:#1A232C; --ink:#E3E8ED; --muted:#9AA7B4; --line:#2E3A46;
+  --mark:#6E6421; --good:#5BBE8D; --good-bg:#183327; --bad:#E58A80; --bad-bg:#3A1F1C;
+  --accent:#7FB0E0; --accent-ink:#0E1A26; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+mark{background:linear-gradient(transparent 52%,var(--mark) 52%);color:inherit;padding:0 .1em}
+
+/* Top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar-inner{max-width:960px;margin:0 auto;padding:12px 20px 0;display:flex;flex-direction:column;gap:10px}
+.title-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.book{font-family:var(--serif);font-size:1.25rem;font-weight:700;margin:0;letter-spacing:-.01em}
+.book span{font-weight:400;color:var(--muted)}
+.chap-pick{font-size:.875rem;color:var(--muted)}
+.chapsel{font:inherit;font-size:.9rem;padding:5px 8px;border:1.5px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:70vw}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;margin:0 -4px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{appearance:none;border:0;background:none;padding:10px 12px 12px;cursor:pointer;font-weight:500;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.tab .step{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;font-size:.7rem;font-weight:700}
+.tab.done .step{background:var(--good);border-color:var(--good);color:var(--surface)}
+
+main{max-width:960px;margin:0 auto;padding:28px 20px 80px}
+main:has(#read:not([hidden])){padding-bottom:0}
+#read .pagenav{margin-bottom:0}
+section[hidden]{display:none}
+.lede{font-family:var(--serif);font-size:1.0625rem;color:var(--muted);max-width:62ch;margin:0 0 28px}
+h2{font-family:var(--serif);font-size:2rem;line-height:1.15;margin:0 0 8px;letter-spacing:-.015em}
+h3{font-family:var(--serif);font-size:1.3rem;margin:36px 0 10px}
+.prose{font-family:var(--serif);font-size:1.075rem;line-height:1.65;max-width:66ch}
+.prose p{margin:0 0 1em}
+.btn{appearance:none;border:1.5px solid var(--ink);background:var(--ink);color:var(--surface);padding:9px 16px;border-radius:6px;font-weight:600;cursor:pointer}
+.btn.quiet{background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.good{background:var(--good);border-color:var(--good);color:var(--surface)}
+.btn.bad{background:transparent;border-color:var(--bad);color:var(--bad)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.next{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.next p{margin:0;color:var(--muted)}
+
+/* Preview */
+.rules{list-style:none;padding:0;margin:0;display:grid;gap:0;max-width:66ch;counter-reset:r}
+.rules li{counter-increment:r;display:grid;grid-template-columns:44px 1fr;gap:12px;padding:16px 0;border-top:1px solid var(--line)}
+.rules li:last-child{border-bottom:1px solid var(--line)}
+.rules li::before{content:counter(r);font-family:var(--serif);font-size:2rem;font-weight:700;line-height:1;color:var(--muted)}
+.rules strong{display:block;font-size:1.05rem}
+.rules span{color:var(--muted);font-family:var(--serif)}
+.prime{background:var(--surface);border-left:4px solid var(--mark);padding:16px 18px;max-width:66ch;margin:24px 0;font-family:var(--serif)}
+.prime b{font-family:var(--sans)}
+.verdicts{width:100%;max-width:760px;border-collapse:collapse;font-size:.95rem}
+.verdicts-wrap{overflow-x:auto}
+.verdicts th,.verdicts td{text-align:left;padding:10px 12px 10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.verdicts th{font-weight:600;color:var(--muted);font-size:.85rem}
+.v{font-weight:700;white-space:nowrap}
+.v.ok{color:var(--good)} .v.no{color:var(--bad)} .v.meh{color:var(--muted)}
+
+/* Reader */
+.drop{border:2px dashed var(--line);border-radius:10px;padding:40px 24px;text-align:center;background:var(--surface)}
+.drop.over{border-color:var(--accent)}
+.drop p{margin:8px 0;color:var(--muted)}
+.drop label{display:inline-block;margin-top:10px}
+.drop input{position:absolute;width:1px;height:1px;opacity:0}
+.reader-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.pageinfo{font-size:.9rem;color:var(--muted)}
+.pageinfo b{color:var(--ink)}
+.canvas-wrap{background:var(--surface);border:1px solid var(--line);border-radius:4px;overflow:hidden;max-width:760px;margin:0 auto;box-shadow:0 8px 30px -18px rgba(27,42,56,.45)}
+canvas{display:block;width:100%;height:auto;background:#fff}
+.progressline{height:4px;background:var(--line);border-radius:2px;margin:10px 0 0;overflow:hidden}
+.canvas-wrap{border-bottom:0;border-radius:4px 4px 0 0}
+.pagenav{position:sticky;bottom:0;z-index:4;max-width:760px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:0 0 4px 4px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 20px -16px rgba(27,42,56,.5)}
+.pagenav-inner{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pagenav .pageinfo{text-align:center}
+.canvas-wrap{position:relative}
+.hl-layer{position:absolute;inset:0;pointer-events:none}
+.hl-layer.drawing{pointer-events:auto;cursor:text;touch-action:pan-y}
+.hl{position:absolute;background:rgba(243,228,90,.5);mix-blend-mode:multiply;border:0;padding:0;border-radius:2px;cursor:pointer;pointer-events:auto}
+.hl.has-note::after{content:"";position:absolute;right:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:#2B5C8A;border:2px solid #fff}
+.hl.draft{outline:2px dashed #8A7A00}
+.pagetools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.tool{appearance:none;border:1.5px solid var(--line);background:var(--paper);padding:5px 12px;border-radius:999px;font-size:.875rem;font-weight:500;cursor:pointer}
+.tool[aria-pressed="true"]{background:var(--mark);border-color:var(--mark);color:#1B2A38}
+.tab .count{font-size:.75rem;font-weight:700;background:var(--line);color:var(--ink);border-radius:999px;padding:1px 7px}
+.tab .count:empty{display:none}
+.modal{position:fixed;inset:0;z-index:20;background:rgba(10,16,22,.45);display:flex;align-items:flex-end;justify-content:center;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.modal[hidden]{display:none}
+@media (min-width:700px){.modal{align-items:center}}
+.sheet{background:var(--surface);color:var(--ink);border-radius:12px;padding:20px;width:100%;max-width:520px}
+.sheet .nm-title{font-family:var(--serif);font-size:1.3rem;font-weight:700;margin:0 0 2px}
+.nchap{margin-top:32px}
+.note{display:grid;grid-template-columns:minmax(0,300px) 1fr;gap:18px;padding:18px 0;border-top:1px solid var(--line)}
+@media (max-width:640px){.note{grid-template-columns:1fr}}
+.note canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff}
+.note .cmt{font-family:var(--serif);font-size:1.05rem;white-space:pre-wrap;margin:4px 0 12px}
+.note .cmt.empty{color:var(--muted);font-style:italic}
+.note .row .btn{padding:5px 12px;font-size:.875rem}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:8px;font-size:.9rem;z-index:30;max-width:90vw}
+.toast[hidden]{display:none}
+.progressline i{display:block;height:100%;background:var(--ink);width:0;transition:width .2s}
+.small{font-size:.85rem;color:var(--muted)}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);text-decoration:underline;cursor:pointer;font-size:.85rem}
+
+/* Practise */
+.sorter{display:grid;gap:10px;max-width:760px}
+.sq{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.sq q{font-family:var(--serif);font-size:1.075rem;display:block;margin-bottom:10px;quotes:"“" "”"}
+.sq .row .btn{padding:6px 14px;font-size:.9rem}
+.sq.right{border-color:var(--good);background:var(--good-bg)}
+.sq.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.sq .why{margin:10px 0 0;font-size:.95rem}
+.sq .why b.ok{color:var(--good)} .sq .why b.no{color:var(--bad)}
+.rewrite{max-width:760px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:20px}
+.rewrite .ctx{font-size:.875rem;color:var(--muted);margin:0 0 6px}
+.rewrite .badq{font-family:var(--serif);font-size:1.35rem;line-height:1.35;margin:0 0 16px}
+.rewrite .badq s{text-decoration-color:var(--bad);text-decoration-thickness:2px}
+textarea{width:100%;min-height:96px;border:1.5px solid var(--line);border-radius:6px;padding:12px;background:var(--paper);font-family:var(--serif);font-size:1.05rem;resize:vertical}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media (max-width:640px){.compare{grid-template-columns:1fr}}
+.compare div{padding:12px 14px;border-radius:6px;background:var(--paper)}
+.compare h4{margin:0 0 6px;font-size:.85rem;color:var(--muted);font-weight:600}
+.compare p{margin:0;font-family:var(--serif)}
+.broke{margin:14px 0 0;font-size:.95rem}
+.counter{font-size:.875rem;color:var(--muted)}
+
+/* Quiz */
+.quiz{max-width:720px}
+.qprompt{font-family:var(--serif);font-size:1.3rem;line-height:1.4;margin:6px 0 18px}
+.opts{display:grid;gap:8px}
+.opt{appearance:none;text-align:left;border:1.5px solid var(--line);background:var(--surface);padding:12px 14px;border-radius:8px;cursor:pointer;font-size:1rem}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt.right{border-color:var(--good);background:var(--good-bg)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt:disabled{cursor:default}
+.explain{margin-top:16px;padding:14px 16px;border-left:4px solid var(--mark);background:var(--surface);font-family:var(--serif)}
+.score{font-family:var(--serif);font-size:4rem;font-weight:700;line-height:1;margin:10px 0}
+
+/* Flashcards */
+.deckstats{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:20px}
+.deckstats div{font-size:.875rem;color:var(--muted)}
+.deckstats b{display:block;font-family:var(--serif);font-size:1.8rem;color:var(--ink);line-height:1.1}
+.card{max-width:640px;min-height:240px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;gap:20px;box-shadow:0 10px 30px -20px rgba(27,42,56,.5)}
+.card .front{font-family:var(--serif);font-size:1.35rem;line-height:1.35;margin:0}
+.card .back{font-family:var(--serif);font-size:1.075rem;border-top:1px solid var(--line);padding-top:16px;margin:0}
+.boxes{display:flex;gap:4px;margin-top:4px}
+.boxes i{width:18px;height:6px;border-radius:3px;background:var(--line)}
+.boxes i.on{background:var(--good)}
+footer{max-width:960px;margin:0 auto;padding:0 20px 40px;color:var(--muted);font-size:.85rem;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-inner">
+    <div class="title-row">
+      <p class="book"><a href="/" class="small" style="margin-right:10px">← Library</a>__BOOK_TITLE__</p>
+      <div class="row" style="gap:12px"><label class="small" for="chapsel">Chapter</label><select id="chapsel" class="chapsel"></select><span class="chap-pick" id="overall">0 of 3 steps done</span></div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Study steps">
+      <button class="tab" role="tab" data-tab="preview"><span class="step">1</span>Preview</button>
+      <button class="tab" role="tab" data-tab="read"><span class="step">2</span>Read</button>
+      <button class="tab" role="tab" data-tab="quiz"><span class="step">3</span>Quiz</button>
+      <button class="tab" role="tab" data-tab="notes">My notes <span class="count" id="notecount"></span></button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section id="soon" hidden>
+  <h2 id="soontitle"></h2>
+  <p class="lede">Study materials for this chapter aren’t ready yet. You can read it now.</p>
+  <button class="btn" id="soonread">Read this chapter</button>
+</section>
+<!-- PREVIEW -->
+<section id="preview" role="tabpanel">
+  <h2>Before you read</h2>
+  <p class="prose" id="pvsummary" style="font-size:1.3rem;line-height:1.45;margin:16px 0 0"></p>
+
+  <div class="prime" style="margin-top:28px"><b>Think about while you read</b>
+    <ol id="pvthink" style="margin:10px 0 0;padding-left:1.3em"></ol>
+  </div>
+
+  <div class="next"><p id="pvnext"></p><button class="btn" data-goto="read" data-complete="preview">Done, start reading</button></div>
+</section>
+
+<!-- READ -->
+<section id="read" role="tabpanel" hidden>
+  <p id="readlede" hidden></p>
+
+  <p id="readerr" class="small" role="alert">Loading the book…</p>
+
+  <div id="reader" hidden>
+    <div class="canvas-wrap"><canvas id="pdfcanvas" aria-label="Book page"></canvas><div class="hl-layer drawing" id="hl"></div></div>
+    <div class="pagenav">
+      <div class="pagetools">
+        <span class="small" id="pagenotes"></span>
+      </div>
+      <div class="pagenav-inner">
+        <button class="btn quiet" id="prev">Previous</button>
+        <div class="pageinfo" id="pageinfo"></div>
+        <button class="btn" id="nextp">Next</button>
+      </div>
+      <div class="progressline"><i id="readbar"></i></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" role="tabpanel" hidden>
+  <h2>Quiz</h2>
+  <p class="lede">Scenarios, not trivia. Pick what you’d actually do or conclude.</p>
+  <div class="quiz" id="quizbox"></div>
+</section>
+
+<!-- NOTES -->
+<section id="notes" role="tabpanel" hidden>
+  <h2>My notes</h2>
+  <p class="lede" id="notesstatus"></p>
+  <div class="row" style="justify-content:space-between"><div class="row"><label class="small" for="notesfilter">Show</label><select id="notesfilter" class="chapsel"><option value="all">All chapters</option></select></div><div class="row"><button class="btn quiet" id="nexport" style="padding:6px 14px;font-size:.9rem">Export notes</button><label class="btn quiet" for="nimport" style="padding:6px 14px;font-size:.9rem">Import notes</label><input type="file" id="nimport" accept="application/json,.json" style="position:absolute;width:1px;height:1px;opacity:0"></div></div>
+  <div id="noteslist"></div>
+</section>
+</main>
+<div class="modal" id="notemodal" hidden role="dialog" aria-modal="true" aria-labelledby="nmtitle">
+  <div class="sheet">
+    <p class="nm-title" id="nmtitle">Add a comment</p>
+    <p class="small" id="nmwhere" style="margin:0 0 12px"></p>
+    <label for="nmtext" class="small">Comment</label>
+    <textarea id="nmtext" placeholder="What stood out, or how you’d use it…"></textarea>
+    <div class="row" style="justify-content:space-between;margin-top:12px">
+      <button class="btn bad" id="nmdelete">Delete</button>
+      <div class="row"><button class="btn quiet" id="nmcancel">Cancel</button><button class="btn" id="nmsave">Save</button></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+
+
+<script src="/vendor/pdf.min.js"></script>
+<script src="/vendor/pdf.worker.min.js"></script>
+<script>
+/* ---------- State ---------- */
+const KEY = '__SLUG__:v1';
+const API = '/api/books/__BOOK_ID__';
+const BOOK=/*__BOOK_JSON__*/null;
+const defaults = {done:{}, page:BOOK.chapters[0].start, maxPage:BOOK.chapters[0].start, quizBest:null, ch:BOOK.chapters[0].id, pp:{}, doneBy:{}, bestBy:{}};
+let S;
+try { S = Object.assign(JSON.parse(JSON.stringify(defaults)), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch(e){ S = JSON.parse(JSON.stringify(defaults)); }
+if(!S.doneBy) S.doneBy={}; if(!S.bestBy) S.bestBy={};
+
+
+let saveTimer;
+function save(){
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){}
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>fetch(API+'/progress',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify(S)}).catch(()=>{}),400);
+}
+
+/* ---------- Tabs ---------- */
+const TABS = ['preview','read','quiz'];
+const ALLTABS = [...TABS,'notes'];
+function show(id){
+  if(!ALLTABS.includes(id)) id = 'preview';
+  curTab = id;
+  const built = cur().built;
+  document.getElementById('soon').hidden = built || id==='read' || id==='notes';
+  ALLTABS.forEach(t=>{
+    document.getElementById(t).hidden = t!==id || (!built && t!=='read' && t!=='notes');
+    const b = document.querySelector(`.tab[data-tab="${t}"]`);
+    b.setAttribute('aria-selected', t===id);
+  });
+  try { history.replaceState(null,'','#'+id); } catch(e){}
+  window.scrollTo(0,0);
+  if(id==='read') renderPage();
+  if(id==='notes') renderNotes();
+}
+function complete(step){ (S.doneBy[S.ch]=S.doneBy[S.ch]||{})[step]=true; save(); paintDone(); }
+function paintDone(){
+  let n=0;
+  const dn=S.doneBy[S.ch]||{};
+  TABS.forEach(t=>{ const d=!!dn[t]; if(d)n++; document.querySelector(`.tab[data-tab="${t}"]`).classList.toggle('done',d); });
+  document.getElementById('overall').textContent = `${n} of ${TABS.length} steps done`;
+}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>show(b.dataset.tab));
+document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>{ if(b.dataset.complete) complete(b.dataset.complete); show(b.dataset.goto); }));
+
+/* ---------- Reader ---------- */
+const CHAPTERS=BOOK.chapters.map(c=>({id:c.id,label:c.label,start:c.start,end:c.end,built:true}));
+let START=CHAPTERS[0].start, END=CHAPTERS[0].end, curTab='preview';
+function cur(){ return CHAPTERS.find(c=>c.id===S.ch)||CHAPTERS[0]; }
+function chLabel(c){ return c.label; }
+function setChapter(id){
+  if(S.pp) S.pp[S.ch]={page:S.page,max:S.maxPage};
+  const c=CHAPTERS.find(x=>x.id===id)||CHAPTERS[0];
+  S.ch=c.id; START=c.start; END=c.end;
+  const p=S.pp[c.id]||{page:c.start,max:c.start};
+  S.page=Math.min(END,Math.max(START,p.page)); S.maxPage=Math.min(END,Math.max(START,p.max));
+  save();
+  const sel=document.getElementById('chapsel'); if(sel) sel.value=c.id;
+  document.getElementById('readlede').textContent=`Shows ${c.label}, book pages ${START} to ${END}, from your own copy.`;
+  document.getElementById('soontitle').textContent=chLabel(c);
+  const ct=CONTENT[c.id];
+  document.getElementById('pvsummary').innerHTML=ct.summary;
+  const th=document.getElementById('pvthink'); th.innerHTML='';
+  ct.think.forEach((t,k)=>{ const li=document.createElement('li'); if(k<ct.think.length-1) li.style.marginBottom='8px'; li.textContent=t; th.appendChild(li); });
+  document.getElementById('pvnext').textContent=`Next: read book pages ${START}–${END}.`;
+  if(typeof qi!=='undefined'){ QUIZ=ct.quiz; qi=0; qscore=0; renderQuiz(); }
+  paintDone();
+}
+let pdfDoc=null, renderTask=null;
+async function openPdf(buf){
+  const err=document.getElementById('readerr'); err.textContent='';
+  try{
+    if(!window.pdfjsLib) throw new Error('viewer');
+    pdfjsLib.GlobalWorkerOptions.workerSrc='/vendor/pdf.worker.min.js';
+    pdfDoc = await pdfjsLib.getDocument({data:new Uint8Array(buf.slice(0))}).promise;
+    err.hidden=true;
+    document.getElementById('reader').hidden=false;
+    renderPage(); notesChanged();
+  }catch(e){
+    err.textContent = e.message==='viewer' ? 'The PDF viewer didn’t load. Reload the page.' : 'This book’s PDF couldn’t be opened. Check studybook is still running, then reload.';
+  }
+}
+async function renderPage(){
+  if(!pdfDoc) return;
+  S.page=Math.min(END,Math.max(START,S.page)); 
+  S.maxPage=Math.max(S.maxPage,S.page); S.pp[S.ch]={page:S.page,max:S.maxPage}; save();
+  const page=await pdfDoc.getPage(S.page);
+  const canvas=document.getElementById('pdfcanvas');
+  const width=canvas.parentElement.clientWidth||700;
+  const base=page.getViewport({scale:1});
+  const dpr=Math.min(window.devicePixelRatio||1,2.5);
+  const vp=page.getViewport({scale:(width/base.width)*dpr});
+  canvas.width=vp.width; canvas.height=vp.height;
+  if(renderTask){ try{renderTask.cancel();}catch(e){} }
+  renderTask=page.render({canvasContext:canvas.getContext('2d'),viewport:vp});
+  try{ await renderTask.promise; }catch(e){}
+  drawHighlights();
+  const n=S.page-START+1, total=END-START+1;
+  document.getElementById('pageinfo').innerHTML=`Page <b>${n}</b> of ${total} <span class="small">(book p. ${S.page})</span>`;
+  document.getElementById('readbar').style.width=`${(S.maxPage-START+1)/total*100}%`;
+  document.getElementById('prev').disabled=S.page<=START;
+  const nx=document.getElementById('nextp'), last=S.page>=END;
+  nx.textContent= last ? (cur().built?'Done, take the quiz':'End of chapter') : 'Next';
+  nx.disabled= last && !cur().built;
+}
+function toTop(){ window.scrollTo({top:0,behavior:'instant'}); }
+document.getElementById('prev').onclick=()=>{S.page--;renderPage();toTop();};
+document.getElementById('nextp').onclick=()=>{ if(S.page>=END){ complete('read'); show('quiz'); return; } S.page++; renderPage(); toTop(); };
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('read').hidden||!pdfDoc||/TEXTAREA|INPUT|SELECT/.test(e.target.tagName)||!document.getElementById('notemodal').hidden)return;
+  if(e.key==='ArrowRight'&&S.page<END){S.page++;renderPage();toTop();}
+  if(e.key==='ArrowLeft'&&S.page>START){S.page--;renderPage();toTop();}
+});
+let rz; window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(renderPage,200);});
+
+/* ---------- Quiz ---------- */
+const CONTENT={}; BOOK.chapters.forEach(c=>{ CONTENT[c.id]={summary:c.summary,think:c.think,quiz:c.quiz}; });
+let QUIZ=CONTENT[CHAPTERS[0].id].quiz;
+let qi=0, qscore=0, qanswered=false;
+function renderQuiz(){
+  const box=document.getElementById('quizbox');
+  if(qi>=QUIZ.length){
+    const pb=S.bestBy[S.ch]; if(pb===undefined||pb===null||qscore>pb){S.bestBy[S.ch]=qscore;}
+    complete('quiz'); save();
+    box.innerHTML=`<p class="small">Your score</p><p class="score">${qscore}/${QUIZ.length}</p><p class="prose">${qscore/QUIZ.length>=0.85?'Strong. You’ve got this chapter.':qscore/QUIZ.length>=0.6?'Solid. Look back at the pages behind the ones you missed.':'Worth another read of the chapter, then retake it.'}</p><p class="small">Best so far: ${S.bestBy[S.ch]}/${QUIZ.length}</p><div class="row" style="margin-top:16px"><button class="btn" id="qagain">Retake quiz</button></div>`;
+    document.getElementById('qagain').onclick=()=>{qi=0;qscore=0;renderQuiz();};
+    return;
+  }
+  const it=QUIZ[qi]; qanswered=false;
+  box.innerHTML=`<p class="small">Question ${qi+1} of ${QUIZ.length}</p><p class="qprompt"></p><div class="opts"></div><div id="qexp"></div>`;
+  box.querySelector('.qprompt').textContent=it.p;
+  const opts=box.querySelector('.opts');
+  if(!it.order){ it.order=[...it.o.keys()]; for(let k=it.order.length-1;k>0;k--){ const r=Math.floor(Math.random()*(k+1)); [it.order[k],it.order[r]]=[it.order[r],it.order[k]]; } }
+  it.order.forEach((j)=>{ const t=it.o[j];
+    const b=document.createElement('button'); b.className='opt'; b.textContent=t;
+    b.onclick=()=>{
+      if(qanswered)return; qanswered=true;
+      if(j===it.a) qscore++;
+      opts.querySelectorAll('.opt').forEach((x,k)=>{ x.disabled=true; const oi=it.order[k]; if(oi===it.a)x.classList.add('right'); else if(oi===j)x.classList.add('wrong'); });
+      document.getElementById('qexp').innerHTML=`<div class="explain"><b style="font-family:var(--sans)">${j===it.a?'Right.':'Not quite.'}</b> ${it.e}</div><div class="row" style="margin-top:14px"><button class="btn" id="qnext">${qi===QUIZ.length-1?'See score':'Next question'}</button></div>`;
+      document.getElementById('qnext').onclick=()=>{qi++;renderQuiz();};
+      document.getElementById('qnext').focus();
+    };
+    opts.appendChild(b);
+  });
+}
+
+/* ---------- Highlights & notes ---------- */
+let NOTES=[];
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true,3500); }
+function newId(){ return 'note_'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function clean(n){ return {id:n.id,kind:'note',ch:n.ch,page:n.page,rects:n.rects||null,comment:n.comment||'',created:n.created,updated:n.updated}; }
+// Sends changed notes; the server merges them (newer edit wins) and returns them all.
+async function syncNotes(changes){
+  try{
+    const r=await fetch(API+'/notes',{method:changes?'PUT':'GET',headers:{'content-type':'application/json'},body:changes?JSON.stringify(changes):undefined});
+    if(!r.ok) throw new Error();
+    NOTES=(await r.json()).filter(n=>!n.deleted); notesChanged();
+  }catch(e){ toast('Couldn’t save your notes. Check studybook is still running.'); }
+}
+function upsertNote(n){
+  n.updated=Date.now(); if(!n.created) n.created=n.updated;
+  const i=NOTES.findIndex(x=>x.id===n.id); if(i>=0) NOTES[i]=n; else NOTES.push(n);
+  notesChanged(); syncNotes([clean(n)]);
+}
+function deleteNote(id){
+  NOTES=NOTES.filter(x=>x.id!==id); notesChanged();
+  syncNotes([{id,deleted:true,updated:Date.now()}]);
+}
+function notesChanged(){
+  document.getElementById('notecount').textContent=NOTES.length||'';
+  drawHighlights();
+  if(!document.getElementById('notes').hidden) renderNotes();
+}
+function drawHighlights(){
+  const layer=document.getElementById('hl'); if(!layer) return;
+  layer.querySelectorAll('.hl:not(.draft)').forEach(x=>x.remove());
+  const here=NOTES.filter(n=>n.page===S.page);
+  here.filter(n=>n.rects).forEach(n=>n.rects.forEach(r=>{
+    const b=document.createElement('button'); b.className='hl'+(n.comment?' has-note':'');
+    Object.assign(b.style,{left:r.x*100+'%',top:r.y*100+'%',width:r.w*100+'%',height:r.h*100+'%'});
+    b.setAttribute('aria-label',n.comment?'Highlight with comment, open it':'Highlight, add a comment');
+    b.onclick=()=>openNote(n,false);
+    layer.appendChild(b);
+  }));
+  const pn=here.length; const el=document.getElementById('pagenotes');
+  if(el) el.textContent=pn?`${pn} note${pn>1?'s':''} on this page`:'';
+}
+// drawing
+let drawing=true, draft=null, startPt=null;
+const hlLayer=document.getElementById('hl');
+function pt(e){ const r=hlLayer.getBoundingClientRect(); return {x:Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)),y:Math.min(1,Math.max(0,(e.clientY-r.top)/r.height))}; }
+function boxOf(a,b){ return {x:Math.min(a.x,b.x),y:Math.min(a.y,b.y),w:Math.abs(a.x-b.x),h:Math.abs(a.y-b.y)}; }
+function placeDraft(r){ Object.assign(draft.style,{left:r.x*100+'%',top:r.y*100+'%',width:r.w*100+'%',height:r.h*100+'%'}); }
+hlLayer.addEventListener('pointerdown',e=>{
+  if(!drawing||e.button>0||e.target.closest('.hl:not(.draft)')) return; if(e.pointerType!=='touch') e.preventDefault(); try{ hlLayer.setPointerCapture(e.pointerId); }catch(_){}
+  startPt=pt(e); draft=document.createElement('div'); draft.className='hl draft'; hlLayer.appendChild(draft); placeDraft(boxOf(startPt,startPt));
+});
+hlLayer.addEventListener('pointermove',e=>{ if(draft&&startPt) placeDraft(boxOf(startPt,pt(e))); });
+hlLayer.addEventListener('pointercancel',()=>{ if(draft){ draft.remove(); draft=null; } startPt=null; });
+hlLayer.addEventListener('pointerup',e=>{
+  if(!draft||!startPt) return;
+  const r=boxOf(startPt,pt(e)); startPt=null;
+  if(r.w<0.02||r.h<0.008){ draft.remove(); draft=null; return; }
+  openNote({id:newId(),ch:S.ch,page:S.page,rects:[r],comment:''},true);
+});
+// modal
+let editing=null, editingNew=false;
+const modal=document.getElementById('notemodal'), nmtext=document.getElementById('nmtext');
+function openNote(n,isNew){
+  editing=Object.assign({},n); editingNew=isNew;
+  const c=CHAPTERS.find(x=>x.id===n.ch)||CHAPTERS[0];
+  document.getElementById('nmtitle').textContent=isNew?(n.rects?'Add a comment':'Note on this page'):'Edit note';
+  document.getElementById('nmwhere').textContent=`${chLabel(c)}, book p. ${n.page}${n.rects?'':' (no highlight)'}`+(isNew&&n.rects?'. A comment is optional.':'');
+  nmtext.value=n.comment||'';
+  document.getElementById('nmdelete').hidden=isNew;
+  modal.hidden=false; setTimeout(()=>nmtext.focus(),30);
+}
+function closeNote(){ modal.hidden=true; if(draft){ draft.remove(); draft=null; } editing=null; }
+document.getElementById('nmcancel').onclick=closeNote;
+modal.addEventListener('click',e=>{ if(e.target===modal) closeNote(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!modal.hidden) closeNote(); });
+document.getElementById('nmsave').onclick=()=>{
+  const text=nmtext.value.trim();
+  if(!editing.rects&&!text){ nmtext.focus(); return; }
+  editing.comment=text; const n=editing; closeNote(); upsertNote(n);
+};
+document.getElementById('nmdelete').onclick=()=>{ if(!confirm('Delete this note?')) return; const id=editing.id; closeNote(); deleteNote(id); };
+// notes view
+const pageCache={};
+async function pageImage(num){
+  if(pageCache[num]) return pageCache[num];
+  pageCache[num]=(async()=>{
+    const page=await pdfDoc.getPage(num); const vp=page.getViewport({scale:2});
+    const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height;
+    await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise; return c;
+  })();
+  return pageCache[num];
+}
+async function drawCrop(canvas,n){
+  try{
+    const src=await pageImage(n.page);
+    const y0=Math.max(0,Math.min(...n.rects.map(r=>r.y))-0.012), y1=Math.min(1,Math.max(...n.rects.map(r=>r.y+r.h))+0.012);
+    const x0=0.06, x1=0.94;
+    const sx=x0*src.width, sy=y0*src.height, sw=(x1-x0)*src.width, sh=Math.max(8,(y1-y0)*src.height);
+    canvas.width=sw; canvas.height=sh;
+    const ctx=canvas.getContext('2d'); ctx.drawImage(src,sx,sy,sw,sh,0,0,sw,sh);
+    ctx.globalCompositeOperation='multiply'; ctx.fillStyle='rgba(243,228,90,.6)';
+    n.rects.forEach(r=>ctx.fillRect(r.x*src.width-sx,r.y*src.height-sy,r.w*src.width,r.h*src.height));
+  }catch(e){}
+}
+const nf=document.getElementById('notesfilter');
+CHAPTERS.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=chLabel(c); nf.appendChild(o); });
+nf.onchange=renderNotes;
+function renderNotes(){
+  document.getElementById('notesstatus').textContent='Saved on this computer, in this book’s studybook folder. Every highlight and comment from every chapter, in page order.';
+  const list=document.getElementById('noteslist'); list.innerHTML='';
+  const f=nf.value;
+  const items=NOTES.filter(n=>f==='all'||n.ch===+f).sort((a,b)=>a.page-b.page||((a.rects?a.rects[0].y:0)-(b.rects?b.rects[0].y:0))||a.created-b.created);
+  if(!items.length){ list.innerHTML='<p class="prose" style="margin-top:20px">No notes yet. In the reader, drag across a passage to highlight it and add a comment.</p>'; return; }
+  let lastCh=null, group=null;
+  items.forEach(n=>{
+    if(n.ch!==lastCh){ lastCh=n.ch; group=document.createElement('div'); group.className='nchap'; const c=CHAPTERS.find(x=>x.id===n.ch)||CHAPTERS[0]; group.innerHTML=`<h3 style="margin:0 0 4px"></h3>`; group.querySelector('h3').textContent=chLabel(c); list.appendChild(group); }
+    const el=document.createElement('div'); el.className='note';
+    const left=document.createElement('div');
+    if(n.rects){
+      if(pdfDoc){ const cv=document.createElement('canvas'); cv.setAttribute('aria-label',`Highlighted passage on page ${n.page}`); left.appendChild(cv); drawCrop(cv,n); }
+      else left.innerHTML='<p class="small">Open your PDF in the Read step to see the highlighted passage here.</p>';
+    } else left.innerHTML='<p class="small">Note on the whole page</p>';
+    const right=document.createElement('div');
+    right.innerHTML=`<p class="small" style="margin:0">Book p. ${n.page}</p><p class="cmt"></p><div class="row"><button class="btn quiet" data-a="go">Go to page</button><button class="btn quiet" data-a="edit">${n.comment?'Edit':'Add comment'}</button></div>`;
+    const cm=right.querySelector('.cmt'); cm.textContent=n.comment||'No comment'; if(!n.comment) cm.classList.add('empty');
+    right.querySelector('[data-a="go"]').onclick=()=>{ setChapter(n.ch); S.page=n.page; S.maxPage=Math.max(S.maxPage,n.page); save(); show('read'); };
+    right.querySelector('[data-a="edit"]').onclick=()=>openNote(n,false);
+    el.appendChild(left); el.appendChild(right); group.appendChild(el);
+  });
+}
+
+/* ---------- Export / import ---------- */
+async function exportNotes(){
+  const data=JSON.stringify({app:'__SLUG__-notes',version:1,exported:Date.now(),notes:NOTES.map(clean)},null,2);
+  const filename='__SLUG__-notes.json';
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([data],{type:'application/json'})); a.download=filename;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1000);
+}
+async function importNotes(file){
+  let parsed; try{ parsed=JSON.parse(await file.text()); }catch(e){ toast('That file isn’t a notes export.'); return; }
+  const incoming=(parsed&&parsed.app==='__SLUG__-notes'&&Array.isArray(parsed.notes))?parsed.notes:null;
+  if(!incoming){ toast('That file isn’t a notes export.'); return; }
+  let added=0, updated=0; const changes=[];
+  incoming.forEach(n=>{
+    if(!n||typeof n.id!=='string'||typeof n.page!=='number'||typeof n.ch!=='number') return;
+    const note={id:n.id,ch:n.ch,page:n.page,rects:Array.isArray(n.rects)?n.rects.filter(r=>r&&[r.x,r.y,r.w,r.h].every(v=>typeof v==='number')):null,comment:typeof n.comment==='string'?n.comment.slice(0,5000):'',created:+n.created||Date.now(),updated:+n.updated||Date.now()};
+    if(note.rects&&!note.rects.length) note.rects=null;
+    const i=NOTES.findIndex(x=>x.id===note.id);
+    if(i<0){ NOTES.push(note); added++; }
+    else if((NOTES[i].updated||0)<note.updated){ NOTES[i]=note; updated++; }
+    else return;
+    changes.push(clean(note));
+  });
+  notesChanged(); if(changes.length) syncNotes(changes);
+  toast(added||updated?`Imported ${added} new note${added===1?'':'s'}${updated?` and updated ${updated}`:''}.`:'Nothing new to import.');
+}
+document.getElementById('nexport').onclick=exportNotes;
+document.getElementById('nimport').onchange=e=>{ const f=e.target.files[0]; if(f) importNotes(f); e.target.value=''; };
+
+/* ---------- Reset ---------- */
+const resetBtn=document.getElementById('reset'); if(resetBtn) resetBtn.onclick=()=>{
+  if(!confirm('Clear your study progress? Your PDF and your notes stay.'))return;
+  S=JSON.parse(JSON.stringify(defaults)); setChapter(1); save(); paintDone(); qi=0;qscore=0;
+  renderQuiz(); show('preview');
+};
+
+/* ---------- Init ---------- */
+const chapSel=document.getElementById('chapsel');
+CHAPTERS.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=chLabel(c); chapSel.appendChild(o); });
+chapSel.onchange=e=>{ setChapter(+e.target.value); show(cur().built||curTab==='notes'?curTab:'read'); };
+document.getElementById('soonread').onclick=()=>show('read');
+fetch(API+'/progress').then(r=>r.ok?r.json():null).catch(()=>null).then(saved=>{
+  if(saved&&saved.ch!==undefined) S=Object.assign(JSON.parse(JSON.stringify(defaults)),saved);
+  if(!CHAPTERS.some(c=>c.id===S.ch)) S.ch=CHAPTERS[0].id;
+  setChapter(S.ch);
+  notesChanged(); syncNotes();
+  paintDone(); renderQuiz();
+  show((location.hash||'#preview').slice(1));
+});
+fetch(API+'/pdf').then(r=>{ if(!r.ok) throw new Error(); return r.arrayBuffer(); }).then(openPdf).catch(()=>{ const err=document.getElementById('readerr'); err.textContent='This book’s PDF couldn’t be loaded. Check studybook is still running, then reload.'; });
+</script>
+</body>
+</html>

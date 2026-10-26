@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.DS_Store
+*.log
+.env*.local
+test-results/
+local/fixtures/*.pdf
+*.tsbuildinfo
+next-env.d.ts

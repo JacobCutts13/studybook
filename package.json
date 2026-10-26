@@ -1,0 +1,29 @@
+{
+  "name": "studybook",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "typecheck": "pnpm --filter web typecheck",
+    "test": "node --test local/*.test.mjs",
+    "e2e": "node --test e2e/*.test.mjs",
+    "fixture": "node local/fixtures/make-sample.mjs",
+    "e2e:setup": "playwright-core install chromium-headless-shell"
+  },
+  "dependencies": {
+    "pdfjs-dist": "3.11.174"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "pdf-lib": "1.17.1",
+    "playwright-core": "1.64.1"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}
