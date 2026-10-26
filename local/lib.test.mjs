@@ -39,7 +39,10 @@ const goodChapter = () => ({
 
 test("reads pages and strips running headers and page numbers", () => {
   assert.equal(pages.length, 9);
-  assert.ok(pages.every((lines) => !lines.includes("A Sample Book")));
+  assert.ok(
+    pages.every((lines) => lines.every((l) => !l.startsWith("A Sample Book"))),
+    "running header with a page number is removed",
+  );
   assert.ok(pages.every((lines) => lines.every((l) => !/^\d+$/.test(l))));
   assert.equal(pages[3][0], "Chapter One: Small Bets");
 });

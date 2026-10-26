@@ -53,7 +53,12 @@ for (const [title, lines] of SECTIONS) {
   for (let i = 0; i < pages; i++) {
     const page = doc.addPage([420, 595]);
     pageNumber++;
-    page.drawText("A Sample Book", { x: 40, y: 560, size: 8, font });
+    page.drawText(`A Sample Book ${pageNumber}`, {
+      x: 40,
+      y: 560,
+      size: 8,
+      font,
+    });
     if (i === 0) page.drawText(title, { x: 40, y: 510, size: 18, font });
     const body = i === 0 ? lines : lines.map((line) => `(continued) ${line}`);
     body.forEach((line, n) => {

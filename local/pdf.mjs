@@ -34,16 +34,18 @@ export async function readPageLines(path) {
   return pages;
 }
 
-// Drops page-number lines and running headers/footers (lines on >40% of pages).
+// Drops page-number lines and running headers/footers (lines on >40% of
+// pages). Digits are ignored when comparing, so "Title 23" matches "Title 24".
 export function cleanPages(pages) {
+  const key = (line) => line.replace(/\d+/g, "#");
   const counts = new Map();
   for (const lines of pages)
-    for (const line of new Set(lines))
-      counts.set(line, (counts.get(line) ?? 0) + 1);
+    for (const k of new Set(lines.map(key)))
+      counts.set(k, (counts.get(k) ?? 0) + 1);
   const limit = Math.max(2, 0.4 * pages.length);
   return pages.map((lines) =>
     lines.filter(
-      (line) => !/^\d+$/.test(line) && (counts.get(line) ?? 0) <= limit,
+      (line) => !/^\d+$/.test(line) && (counts.get(key(line)) ?? 0) <= limit,
     ),
   );
 }

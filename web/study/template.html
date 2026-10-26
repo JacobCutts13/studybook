@@ -595,13 +595,18 @@ const chapSel=document.getElementById('chapsel');
 CHAPTERS.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=chLabel(c); chapSel.appendChild(o); });
 chapSel.onchange=e=>{ setChapter(+e.target.value); show(cur().built||curTab==='notes'?curTab:'read'); };
 document.getElementById('soonread').onclick=()=>show('read');
-fetch(API+'/progress').then(r=>r.ok?r.json():null).catch(()=>null).then(saved=>{
-  if(saved&&saved.ch!==undefined) S=Object.assign(JSON.parse(JSON.stringify(defaults)),saved);
+// Draw straight away from this browser's copy, then switch to the saved
+// progress in the book folder if it's different (e.g. a new browser).
+function start(){
   if(!CHAPTERS.some(c=>c.id===S.ch)) S.ch=CHAPTERS[0].id;
-  setChapter(S.ch);
-  notesChanged(); syncNotes();
-  paintDone(); renderQuiz();
-  show((location.hash||'#preview').slice(1));
+  setChapter(S.ch); paintDone(); renderQuiz();
+  show(curTab==='preview'?(location.hash||'#preview').slice(1):curTab);
+}
+start(); syncNotes();
+fetch(API+'/progress').then(r=>r.ok?r.json():null).catch(()=>null).then(saved=>{
+  if(!saved||saved.ch===undefined||JSON.stringify(saved)===JSON.stringify(S)) return;
+  S=Object.assign(JSON.parse(JSON.stringify(defaults)),saved);
+  start();
 });
 fetch(API+'/pdf').then(r=>{ if(!r.ok) throw new Error(); return r.arrayBuffer(); }).then(openPdf).catch(()=>{ const err=document.getElementById('readerr'); err.textContent='This book’s PDF couldn’t be loaded. Check studybook is still running, then reload.'; });
 </script>
