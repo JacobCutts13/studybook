@@ -6,23 +6,29 @@
 <title>Learn __BOOK_TITLE__</title>
 <link rel="stylesheet" href="/vendor/fonts/inter/index.css">
 <style>
-/* Tokens mirror the support-app's semantic roles (ui/theme/colors). */
+/* Colours: Radix Colors (MIT, github.com/radix-ui/colors), mauve / indigo /
+   green / red / amber. Components follow common product-UI specs: 32px
+   controls, 6px radii, 14/20 body text. */
 :root{
-  --bg-1:#ffffff; --bg-2:#f9f9fc;
-  --border-1:#e7e7ef; --border-2:#e0e0e9; --border-3:#cdcddb;
-  --fill-1:#f0f0f5; --fill-2:#e7e7ef;
-  --solid:#1f1f28; --solid-hover:#0b0b0e; --on-solid:#ffffff;
-  --text-1:#1f1f28; --text-2:#636370;
-  --accent:#5c67f4; --accent-text:#4a52d1; --accent-fill:#eef2ff; --accent-border:#d3ddff;
-  --mark:#ffea9c; --mark-solid:#ffcb14;
-  --good-text:#008046; --good-fill:#e2f9e8; --good-border:#b7eec8;
-  --bad-text:#d1282d; --bad-fill:#ffebe9; --bad-border:#ffcdc7;
-  --shadow-s:0 1px 0 hsla(208,16%,15%,.04),0 2px 5px hsla(208,16%,15%,.06);
-  --shadow-l:0 1px 4px hsla(208,16%,15%,.16),0 8px 40px hsla(208,16%,15%,.16);
-  --scrim:rgba(0,0,0,.4);
+  --bg-1:#ffffff; --bg-2:#faf9fb;
+  --fill-1:#f2eff3; --fill-2:#eae7ec; --fill-3:#e3dfe6;
+  --border-1:#e3dfe6; --border-2:#dbd8e0; --border-3:#d0cdd7; --radio:#bcbac7;
+  --solid:#211f26; --solid-hover:#121113; --solid-disabled:#8e8c99; --on-solid:#ffffff;
+  --text-1:#211f26; --text-2:#65636d; --icon:#8e8c99;
+  --accent:#3e63dd; --accent-text:#3a5bc7; --accent-fill:#edf2fe; --accent-border:#c1d0ff; --focus:#3358d4;
+  --mark:#ffee9c; --mark-solid:#ffc53d;
+  --good-text:#218358; --good-fill:#e6f6eb; --good-bg:#f4fbf6; --good-border:#adddc0;
+  --bad-text:#ce2c31; --bad-fill:#feebec; --bad-bg:#fff7f7; --bad-border:#fdbdbe;
+  --ring:rgba(0,0,0,.08); --ring-hover:rgba(0,0,0,.16);
+  --shadow-s:0 1px 2px rgba(33,31,38,.06),0 1px 1px rgba(33,31,38,.04);
+  --shadow-m:0 1px 4px rgba(33,31,38,.12),0 2px 16px rgba(33,31,38,.08);
+  --shadow-l:0 1px 4px rgba(33,31,38,.16),0 8px 40px rgba(33,31,38,.16);
+  --bevel:inset 0 1px 0 rgba(255,255,255,.14);
+  --scrim:rgba(0,0,0,.447);
   /* Highlights sit on the PDF page, which is always white. */
-  --page-hl:rgba(255,203,20,.38);
+  --page-hl:rgba(255,197,61,.42);
   --medium:475; --bold:550;
+  --fast:75ms; --base:150ms; --slow:300ms;
   --font:"Inter Variable","Inter",-apple-system,BlinkMacSystemFont,sans-serif;
   --bar-h:48px;
   color-scheme:light;
@@ -30,39 +36,47 @@
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     --bg-1:#1a191b; --bg-2:#121113;
-    --border-1:#2b292d; --border-2:#323035; --border-3:#49474e;
-    --fill-1:#232225; --fill-2:#2b292d;
-    --solid:#eeeef0; --solid-hover:#f8f8fc; --on-solid:#121113;
-    --text-1:#eeeef0; --text-2:#b5b2bc;
-    --accent:#5c67f4; --accent-text:#9dafff; --accent-fill:#1c214e; --accent-border:#2c327e;
-    --mark:#3b2a00; --mark-solid:#fdc700;
-    --good-text:#3ad878; --good-fill:#152d1c; --good-border:#19492b;
-    --bad-text:#ff8f86; --bad-fill:#3c1210; --bad-border:#621515;
-    --shadow-s:0 1px 0 hsla(208,16%,15%,.08),0 2px 5px hsla(208,16%,15%,.08),0 0 1px 0 rgba(255,255,255,.10) inset;
-    --shadow-l:0 1px 4px hsla(208,16%,15%,.16),0 8px 40px hsla(208,16%,15%,.16),0 0 1px 0 rgba(255,255,255,.10) inset;
+    --fill-1:#232225; --fill-2:#2b292d; --fill-3:#323035;
+    --border-1:#2b292d; --border-2:#323035; --border-3:#49474e; --radio:#625f69;
+    --solid:#eeeef0; --solid-hover:#ffffff; --solid-disabled:#6f6d78; --on-solid:#121113;
+    --text-1:#eeeef0; --text-2:#b5b2bc; --icon:#7c7a85;
+    --accent:#3e63dd; --accent-text:#9eb1ff; --accent-fill:#182449; --accent-border:#304384; --focus:#5472e4;
+    --mark:#3f2700; --mark-solid:#ffc53d;
+    --good-text:#3dd68c; --good-fill:#132d21; --good-bg:#121b17; --good-border:#20573e;
+    --bad-text:#ff9592; --bad-fill:#3b1219; --bad-bg:#201314; --bad-border:#72232d;
+    --ring:rgba(255,255,255,.10); --ring-hover:rgba(255,255,255,.18);
+    --shadow-s:0 1px 2px rgba(0,0,0,.3),inset 0 0 0 .5px rgba(255,255,255,.06);
+    --shadow-m:0 1px 4px rgba(0,0,0,.3),0 2px 16px rgba(0,0,0,.2),inset 0 0 1px rgba(255,255,255,.1);
+    --shadow-l:0 1px 4px rgba(0,0,0,.35),0 8px 40px rgba(0,0,0,.35),inset 0 0 1px rgba(255,255,255,.1);
+    --bevel:inset 0 1px 0 rgba(255,255,255,.5);
     --bold:600;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg-1:#1a191b; --bg-2:#121113;
-  --border-1:#2b292d; --border-2:#323035; --border-3:#49474e;
-  --fill-1:#232225; --fill-2:#2b292d;
-  --solid:#eeeef0; --solid-hover:#f8f8fc; --on-solid:#121113;
-  --text-1:#eeeef0; --text-2:#b5b2bc;
-  --accent:#5c67f4; --accent-text:#9dafff; --accent-fill:#1c214e; --accent-border:#2c327e;
-  --mark:#3b2a00; --mark-solid:#fdc700;
-  --good-text:#3ad878; --good-fill:#152d1c; --good-border:#19492b;
-  --bad-text:#ff8f86; --bad-fill:#3c1210; --bad-border:#621515;
+  --fill-1:#232225; --fill-2:#2b292d; --fill-3:#323035;
+  --border-1:#2b292d; --border-2:#323035; --border-3:#49474e; --radio:#625f69;
+  --solid:#eeeef0; --solid-hover:#ffffff; --solid-disabled:#6f6d78; --on-solid:#121113;
+  --text-1:#eeeef0; --text-2:#b5b2bc; --icon:#7c7a85;
+  --accent:#3e63dd; --accent-text:#9eb1ff; --accent-fill:#182449; --accent-border:#304384; --focus:#5472e4;
+  --mark:#3f2700; --mark-solid:#ffc53d;
+  --good-text:#3dd68c; --good-fill:#132d21; --good-bg:#121b17; --good-border:#20573e;
+  --bad-text:#ff9592; --bad-fill:#3b1219; --bad-bg:#201314; --bad-border:#72232d;
+  --ring:rgba(255,255,255,.10); --ring-hover:rgba(255,255,255,.18);
+  --bevel:inset 0 1px 0 rgba(255,255,255,.5);
   --bold:600;
   color-scheme:dark;
 }
+@media (prefers-reduced-motion:reduce){:root{--fast:1ms;--base:1ms;--slow:1ms}}
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-padding-top:var(--bar-h)}
 body{margin:0;background:var(--bg-2);color:var(--text-1);font:400 14px/20px var(--font);-webkit-font-smoothing:antialiased;font-feature-settings:"cv11"}
 button,input,textarea,select{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+:focus{outline:none}
+:focus-visible{box-shadow:0 0 0 2px var(--focus);border-radius:4px}
 mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 2px}
+[hidden]{display:none!important}
 .visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .small{font-size:12px;line-height:16px;color:var(--text-2)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -70,21 +84,29 @@ mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 2px}
 /* Top bar */
 .bar{position:sticky;top:0;z-index:5;background:var(--bg-1);border-bottom:1px solid var(--border-1)}
 .bar-inner{display:flex;align-items:center;gap:16px;min-height:var(--bar-h);padding:0 16px;flex-wrap:wrap}
-.back{color:var(--text-2);text-decoration:none;font-weight:var(--medium);white-space:nowrap}
-.back:hover{color:var(--text-1)}
+/* Back link */
+.back{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 8px;margin-left:-8px;border-radius:4px;color:var(--text-1);font-size:12px;font-weight:var(--bold);text-decoration:none;white-space:nowrap;transition:background-color var(--base) ease-in-out}
+.back:hover{background:var(--fill-1)}
+.back .arrow{display:inline-block;transition:transform var(--base) ease-in-out}
+.back:hover .arrow{transform:translateX(-2px)}
 .book{margin:0;font-weight:var(--bold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:32ch}
+/* Tabs */
 .tabs{display:flex;align-self:stretch;gap:4px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{appearance:none;border:0;border-bottom:2px solid transparent;background:none;padding:0 8px;display:flex;align-items:center;gap:6px;color:var(--text-2);font-weight:var(--medium);cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+.tab{appearance:none;border:0;border-bottom:2px solid transparent;background:none;padding:0 8px;display:flex;align-items:center;gap:8px;color:var(--text-2);cursor:pointer;white-space:nowrap;margin-bottom:-1px;transition:color var(--fast) ease-in-out}
 .tab:hover{color:var(--text-1)}
-.tab[aria-selected="true"]{color:var(--text-1);border-bottom-color:var(--text-1)}
-.tab .step{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--border-3);font-size:10px;line-height:1;color:var(--text-2)}
-.tab.done .step{background:var(--good-text);border-color:var(--good-text);color:var(--bg-1);font-size:0}
-.tab.done .step::before{content:"✓";font-size:10px;font-weight:var(--bold)}
-.count{font-size:12px;line-height:16px;font-weight:var(--medium);padding:0 6px;border-radius:999px;background:var(--fill-2);color:var(--text-2)}
+.tab[aria-selected="true"]{color:var(--text-1);font-weight:var(--bold);border-bottom-color:var(--text-1)}
+/* Step marker */
+.tab .step{display:inline-grid;place-items:center;width:18px;height:18px;border:1px solid var(--border-2);border-radius:4px;font-size:10px;line-height:1;font-weight:var(--bold);color:var(--text-2)}
+.tab.done .step{background:var(--good-fill);border-color:var(--good-border);color:var(--good-text);font-size:0}
+.tab.done .step::before{content:"✓";font-size:11px}
+/* Badge (count) */
+.count{display:inline-flex;align-items:center;padding:3px 6px;border-radius:4px;background:var(--fill-1);color:var(--text-1);font-size:10px;line-height:1;font-weight:var(--medium)}
 .count:empty{display:none}
 .bar-end{margin-left:auto;display:flex;align-items:center;gap:12px}
-.chapsel{height:32px;padding:0 8px;border:1px solid var(--border-2);border-radius:6px;background:var(--bg-1);max-width:280px;cursor:pointer}
+/* Select */
+.chapsel{appearance:none;height:30px;padding:0 32px 0 12px;border:1px solid var(--border-1);border-radius:6px;background:var(--bg-1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%238e8c99' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 8px center/16px no-repeat;font-size:12px;line-height:16px;max-width:280px;cursor:pointer;transition:border-color var(--base) ease-in-out}
+.chapsel:hover,.chapsel:focus-visible{border-color:var(--border-3)}
 .chap-pick{font-size:12px;line-height:16px;color:var(--text-2);white-space:nowrap}
 @media (max-width:820px){
   .bar-inner{row-gap:0;padding-top:6px}
@@ -97,38 +119,49 @@ mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 2px}
 main{max-width:720px;margin:0 auto;padding:32px 24px 80px}
 main:has(#read:not([hidden])){max-width:none;padding:0}
 section[hidden]{display:none}
-h2{font-size:24px;line-height:36px;font-weight:var(--bold);letter-spacing:-.01em;margin:0 0 4px}
-h3{font-size:16px;line-height:24px;font-weight:var(--bold);margin:24px 0 8px}
+h2{font-size:24px;line-height:32px;font-weight:var(--bold);letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:14px;line-height:20px;font-weight:var(--bold);margin:24px 0 8px}
 .lede{color:var(--text-2);margin:0 0 24px}
 .prose{font-size:16px;line-height:24px}
 .summary{font-size:18px;line-height:28px;margin:16px 0 0;text-wrap:pretty}
-.prime{background:var(--bg-1);border:1px solid var(--border-1);border-radius:8px;padding:16px;margin:24px 0}
-.prime b{font-weight:var(--bold)}
-.prime ol{margin:8px 0 0;padding-left:20px}
+/* Card */
+.card{background:var(--bg-1);border:1px solid var(--border-1);border-radius:10px;padding:16px;margin:24px 0;box-shadow:var(--shadow-s)}
+.card-title{margin:0;font-weight:var(--bold)}
+.card ol{margin:8px 0 0;padding-left:20px}
+.card li+li{margin-top:8px}
 .next{margin-top:32px;padding-top:16px;border-top:1px solid var(--border-1);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .next p{margin:0;color:var(--text-2)}
 
-/* Buttons */
-.btn{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--solid);background:var(--solid);color:var(--on-solid);font-weight:var(--medium);white-space:nowrap;text-decoration:none;cursor:pointer}
-.btn:hover:not(:disabled){background:var(--solid-hover)}
-.btn.quiet{background:var(--bg-1);border-color:var(--border-2);color:var(--text-1);box-shadow:var(--shadow-s)}
-.btn.quiet:hover:not(:disabled){background:var(--fill-1)}
-.btn.quiet[aria-pressed="true"]{background:var(--fill-2);border-color:var(--border-3);box-shadow:inset 0 1px 2px rgba(0,0,0,.12)}
-.btn.bad{background:var(--bg-1);border-color:var(--border-2);color:var(--bad-text)}
-.btn.bad:hover:not(:disabled){background:var(--bad-fill)}
-.btn.icon{width:32px;padding:0;font-size:16px}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.linkbtn{appearance:none;background:none;border:0;padding:0;color:var(--accent-text);font-weight:var(--medium);cursor:pointer}
-.linkbtn:hover{text-decoration:underline}
+/* Buttons: primary (.btn), secondary (.quiet), destructive (.bad) */
+.btn{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;height:32px;padding:0 12px;border:0;border-radius:6px;background:var(--solid);color:var(--on-solid);font-size:12px;line-height:16px;font-weight:var(--bold);white-space:nowrap;text-decoration:none;cursor:pointer;box-shadow:var(--shadow-s),var(--bevel);transition:background-color var(--fast) ease-in-out,box-shadow var(--fast) ease-in-out,color var(--fast) ease-in-out}
+.btn:hover:not(:disabled){background:var(--solid-hover);box-shadow:var(--shadow-m),var(--bevel)}
+.btn:focus-visible{box-shadow:0 0 0 2px var(--focus)}
+.btn:disabled{background:var(--solid-disabled);box-shadow:none;cursor:not-allowed}
+.btn.quiet{background:var(--bg-1);color:var(--text-1);box-shadow:inset 0 0 0 1px var(--ring),var(--shadow-s)}
+.btn.quiet:hover:not(:disabled){background:var(--bg-2);box-shadow:inset 0 0 0 1px var(--ring-hover),var(--shadow-s)}
+.btn.quiet:active:not(:disabled){background:var(--fill-1)}
+.btn.quiet:disabled{background:var(--bg-2);color:var(--text-2);box-shadow:inset 0 0 0 1px var(--ring)}
+/* Pressed toggles stay secondary so they never compete with the primary action next to them. */
+.btn.quiet[aria-pressed="true"]{background:var(--fill-2);box-shadow:inset 0 0 0 1px var(--border-3),inset 0 1px 2px var(--ring)}
+.btn.quiet[aria-pressed="true"] .count{background:var(--bg-1)}
+.btn.bad{background:var(--bg-1);color:var(--bad-text);box-shadow:inset 0 0 0 1px var(--ring),var(--shadow-s)}
+.btn.bad:hover:not(:disabled){background:var(--bad-bg);box-shadow:inset 0 0 0 1px var(--bad-border)}
+/* Text link */
+.linkbtn{appearance:none;background:none;border:0;padding:0;color:var(--text-1);font-weight:var(--bold);cursor:pointer;text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:.08em;text-decoration-color:color-mix(in srgb,currentColor 50%,transparent)}
+.linkbtn:hover{text-decoration-color:currentColor}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;gap:8px;min-height:240px;margin:0;color:var(--text-2)}
+.spinner{width:14px;height:14px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:spin 650ms ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* Read: full width, the page fits the space unless zoomed */
-#readerr{padding:24px;margin:0}
 #readerr[hidden]{display:none}
 .reader-layout{display:grid;grid-template-columns:minmax(0,1fr) auto}
 .reader-layout[hidden]{display:none}
 .reader-main{min-width:0;display:flex;flex-direction:column;min-height:calc(100dvh - var(--bar-h))}
 .reader-scroll{flex:1;overflow-x:auto;padding:24px}
-.canvas-wrap{position:relative;width:fit-content;margin:0 auto;background:#fff;border:1px solid var(--border-1);border-radius:4px;box-shadow:var(--shadow-s);overflow:hidden}
+.canvas-wrap{position:relative;width:fit-content;margin:0 auto;background:#fff;border-radius:4px;box-shadow:var(--shadow-m);overflow:hidden}
 canvas{display:block}
 .hl-layer{position:absolute;inset:0;pointer-events:none}
 .hl-layer.drawing{pointer-events:auto;cursor:text;touch-action:pan-y}
@@ -143,12 +176,12 @@ canvas{display:block}
 .pageinfo{color:var(--text-2);white-space:nowrap;font-variant-numeric:tabular-nums}
 .pageinfo b{color:var(--text-1);font-weight:var(--medium)}
 .pageinfo .small{font-size:inherit}
-.zoom{display:inline-flex;align-items:stretch;height:32px;border:1px solid var(--border-2);border-radius:6px;overflow:hidden;background:var(--bg-1)}
-.zoom button{appearance:none;border:0;background:none;min-width:32px;padding:0 8px;cursor:pointer;color:var(--text-1)}
-.zoom button:hover{background:var(--fill-1)}
-.zoom button[aria-pressed="true"]{background:var(--fill-2)}
-.zoom > *+*{border-left:1px solid var(--border-2)}
-#zoomlabel{display:grid;place-items:center;min-width:52px;color:var(--text-2);font-variant-numeric:tabular-nums}
+/* Zoom: a toggle-group tray of icon buttons */
+.zoom{display:inline-flex;align-items:center;gap:2px;padding:2px;border-radius:8px;background:var(--fill-1)}
+.zoom button{appearance:none;height:28px;min-width:28px;padding:0 6px;border:0;border-radius:6px;background:none;color:var(--text-2);font-size:12px;font-weight:var(--bold);cursor:pointer;transition:background-color var(--fast) ease-in-out,color var(--fast) ease-in-out}
+.zoom button:hover{background:var(--fill-2);color:var(--text-1)}
+.zoom button[aria-pressed="true"]{background:var(--bg-1);color:var(--text-1);box-shadow:var(--shadow-s)}
+#zoomlabel{min-width:44px;text-align:center;font-size:12px;color:var(--text-2);font-variant-numeric:tabular-nums}
 @media (max-width:700px){
   .pagenav-inner{grid-template-columns:auto 1fr auto;gap:8px}
   .pn-mid{justify-content:center}
@@ -160,54 +193,84 @@ canvas{display:block}
 .readnotes{width:320px;position:sticky;top:var(--bar-h);height:calc(100dvh - var(--bar-h));display:flex;flex-direction:column;background:var(--bg-1);border-left:1px solid var(--border-1)}
 .readnotes[hidden]{display:none}
 @media (max-width:1099px){.readnotes{display:none}#notestoggle{display:none}}
-.rn-head{padding:14px 16px;border-bottom:1px solid var(--border-1)}
-.rn-head h3{margin:0;font-size:14px;line-height:20px}
-#rnlist{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:4px}
-.rn-item{appearance:none;display:block;width:100%;text-align:left;background:none;border:1px solid transparent;border-radius:8px;padding:8px;cursor:pointer}
+.rn-head{padding:12px 12px 12px 16px;border-bottom:1px solid var(--border-1)}
+.rn-head h3{margin:0}
+#rnlist{flex:1;overflow-y:auto;padding:16px}
+#rnlist:has(.rn-item){display:flex;flex-direction:column}
+/* Bordered list */
+.rn-item{appearance:none;display:block;width:100%;text-align:left;background:var(--bg-1);border:1px solid var(--border-1);border-top-width:0;padding:12px 16px;cursor:pointer;transition:background-color var(--base) ease-in-out}
+.rn-item:first-child{border-top-width:1px;border-radius:10px 10px 0 0}
+.rn-item:last-child{border-radius:0 0 10px 10px}
+.rn-item:only-child{border-radius:10px}
 .rn-item:hover{background:var(--fill-1)}
-.rn-item[aria-current="true"]{background:var(--fill-1);border-color:var(--border-2)}
-.rn-item[aria-current="true"] .rn-meta::after{content:" · This page"}
-.rn-item .cmt{margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
-.rn-empty{margin:8px;color:var(--text-2)}
+.rn-item[aria-current="true"]{background:var(--fill-1)}
+.rn-item[aria-current="true"] .rn-meta::after{content:" · This page";color:var(--text-1);font-weight:var(--medium)}
+.rn-item .cmt{margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.rn-empty{margin:0;color:var(--text-2);text-align:center;padding:16px 8px}
 .rn-foot{padding:12px 16px;border-top:1px solid var(--border-1)}
 
-/* Quiz */
+/* Quiz: framed radio rows */
 .quiz{max-width:640px}
 .qprompt{font-size:16px;line-height:24px;font-weight:var(--bold);margin:4px 0 16px;text-wrap:pretty}
 .opts{display:grid;gap:8px}
-.opt{appearance:none;text-align:left;border:1px solid var(--border-2);background:var(--bg-1);padding:10px 12px;border-radius:8px;cursor:pointer;box-shadow:var(--shadow-s)}
-.opt:hover:not(:disabled){background:var(--fill-1);border-color:var(--border-3)}
-.opt.right{border-color:var(--good-border);background:var(--good-fill);color:var(--good-text)}
-.opt.wrong{border-color:var(--bad-border);background:var(--bad-fill);color:var(--bad-text)}
+.opt{appearance:none;display:grid;grid-template-columns:16px 1fr;gap:12px;align-items:start;text-align:left;width:100%;padding:12px 16px 12px 12px;border:1px solid var(--border-1);border-radius:8px;background:var(--bg-1);cursor:pointer;transition:background-color var(--base) ease-in-out,border-color var(--base) ease-in-out}
+.opt i{width:16px;height:16px;margin-top:2px;border:1px solid var(--radio);border-radius:50%;background:var(--bg-1);position:relative;transition:border-color var(--base) ease-in-out}
+.opt:hover:not(:disabled){background:var(--bg-2);border-color:var(--border-3)}
+.opt:hover:not(:disabled) i{border-color:var(--text-2)}
+.opt.chosen i{background:var(--text-1);border-color:var(--text-1)}
+.opt.chosen i::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--bg-1)}
+.opt.right{background:var(--good-bg);border-color:var(--good-border);color:var(--good-text)}
+.opt.right i{border-color:var(--good-text)}
+.opt.right.chosen i{background:var(--good-text)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad-border);color:var(--bad-text)}
+.opt.wrong.chosen i{background:var(--bad-text);border-color:var(--bad-text)}
 .opt:disabled{cursor:default}
-.explain{margin-top:16px;padding:12px 16px;border-radius:8px;background:var(--fill-1)}
+/* Notice bar */
+.explain{margin-top:16px;padding:8px 12px;border:1px solid var(--border-1);border-radius:10px;background:var(--bg-2)}
 .explain b{font-weight:var(--bold)}
+.explain.right{border-color:var(--good-border);background:var(--good-bg)}
+.explain.right b{color:var(--good-text)}
+.qactions{margin-top:16px}
 .score{font-size:32px;line-height:48px;font-weight:var(--bold);margin:4px 0}
 
-/* My notes */
+/* My notes: one bordered list per chapter */
 .nchap{margin-top:24px}
-.note{display:grid;grid-template-columns:minmax(0,280px) 1fr;gap:16px;padding:16px 0;border-top:1px solid var(--border-1)}
+.note{display:grid;grid-template-columns:minmax(0,280px) 1fr;gap:16px;padding:16px;background:var(--bg-1);border:1px solid var(--border-1);border-top-width:0}
+.nchap h3+.note{border-top-width:1px;border-radius:10px 10px 0 0}
+.note:last-child{border-radius:0 0 10px 10px}
+.nchap h3+.note:last-child{border-radius:10px}
 @media (max-width:640px){.note{grid-template-columns:1fr}}
 .note canvas{width:100%;height:auto;border:1px solid var(--border-1);border-radius:4px;background:#fff}
 .note .cmt{white-space:pre-wrap;margin:4px 0 12px}
 .cmt.empty{color:var(--text-2)}
+/* Empty state */
+.empty{margin-top:24px;padding:32px;text-align:center;background:var(--bg-1);border:1px solid var(--border-1);border-radius:10px}
+.empty p{margin:0 auto;max-width:62ch;color:var(--text-2)}
+.empty .empty-title{margin-bottom:4px;color:var(--text-1);font-weight:var(--bold)}
 
 /* Comment dialog */
-.modal{position:fixed;inset:0;z-index:20;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{position:fixed;inset:0;z-index:20;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:16px;animation:fade var(--base) ease-in-out}
 .modal[hidden]{display:none}
-.sheet{width:100%;max-width:480px;background:var(--bg-1);border:1px solid var(--border-1);border-radius:12px;box-shadow:var(--shadow-l);padding:20px}
-.sheet .nm-title{font-size:16px;line-height:24px;font-weight:var(--bold);margin:0}
-textarea{display:block;width:100%;min-height:88px;margin-top:4px;padding:8px 10px;border:1px solid var(--border-2);border-radius:6px;background:var(--bg-1);resize:vertical}
-textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-border)}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:30;max-width:90vw;padding:8px 12px;border-radius:8px;background:var(--solid);color:var(--on-solid);box-shadow:var(--shadow-l)}
+.sheet{width:100%;max-width:500px;background:var(--bg-1);border-radius:12px;box-shadow:var(--shadow-l);padding:20px;animation:rise var(--base) ease-out}
+.sheet .nm-title{margin:0;font-weight:var(--bold)}
+.sheet-desc{margin:8px 0 16px;font-size:12px;line-height:16px;color:var(--text-2)}
+.field-label{display:block;margin-bottom:8px;font-weight:var(--bold)}
+textarea{display:block;width:100%;min-height:88px;padding:8px 12px;border:1px solid var(--border-2);border-radius:4px;background:var(--bg-1);resize:vertical;transition:border-color var(--base) ease-in-out}
+textarea:hover{border-color:var(--border-3)}
+textarea::placeholder{color:var(--text-2)}
+textarea:focus-visible{border-radius:4px}
+@keyframes fade{from{opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(16px) scale(.96)}}
+/* Toast */
+.toast{position:fixed;right:24px;bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:30;width:360px;max-width:calc(100vw - 48px);padding:12px;border-radius:4px;background:var(--bg-1);color:var(--text-1);box-shadow:var(--shadow-m);animation:slidein var(--slow) ease-out}
 .toast[hidden]{display:none}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@keyframes slidein{from{opacity:0;transform:translateX(24px)}}
 </style>
 </head>
 <body>
 <header class="bar">
   <div class="bar-inner">
-    <a href="/" class="back">← Library</a>
+    <a href="/" class="back"><span class="arrow" aria-hidden="true">←</span>Library</a>
     <p class="book">__BOOK_TITLE__</p>
     <nav class="tabs" role="tablist" aria-label="Study steps">
       <button class="tab" role="tab" data-tab="preview"><span class="step">1</span>Preview</button>
@@ -233,7 +296,7 @@ textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(
   <h2>Before you read</h2>
   <p class="summary" id="pvsummary"></p>
 
-  <div class="prime"><b>Think about while you read</b>
+  <div class="card"><p class="card-title">Think about while you read</p>
     <ol id="pvthink"></ol>
   </div>
 
@@ -244,7 +307,7 @@ textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(
 <section id="read" role="tabpanel" hidden>
   <p id="readlede" hidden></p>
 
-  <p id="readerr" class="small" role="alert">Loading the book…</p>
+  <p id="readerr" class="loading" role="status"><span class="spinner" aria-hidden="true"></span>Loading the book…</p>
 
   <div id="reader" class="reader-layout" hidden>
     <div class="reader-main">
@@ -297,12 +360,12 @@ textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(
 <div class="modal" id="notemodal" hidden role="dialog" aria-modal="true" aria-labelledby="nmtitle">
   <div class="sheet">
     <p class="nm-title" id="nmtitle">Add a comment</p>
-    <p class="small" id="nmwhere" style="margin:0 0 12px"></p>
-    <label for="nmtext" class="small">Comment</label>
+    <p class="sheet-desc" id="nmwhere"></p>
+    <label for="nmtext" class="field-label">Comment</label>
     <textarea id="nmtext" placeholder="What stood out, or how you’d use it…"></textarea>
     <div class="row" style="justify-content:space-between;margin-top:12px">
       <button class="btn bad" id="nmdelete">Delete</button>
-      <div class="row"><button class="btn quiet" id="nmcancel">Cancel</button><button class="btn" id="nmsave">Save</button></div>
+      <div class="row" style="margin-left:auto"><button class="btn quiet" id="nmcancel">Cancel</button><button class="btn" id="nmsave">Save</button></div>
     </div>
   </div>
 </div>
@@ -393,6 +456,7 @@ async function openPdf(buf){
     document.getElementById('reader').hidden=false;
     renderPage(); notesChanged();
   }catch(e){
+    err.setAttribute('role','alert');
     err.textContent = e.message==='viewer' ? 'The PDF viewer didn’t load. Reload the page.' : 'This book’s PDF couldn’t be opened. Check studybook is still running, then reload.';
   }
 }
@@ -477,12 +541,12 @@ function renderQuiz(){
   const opts=box.querySelector('.opts');
   if(!it.order){ it.order=[...it.o.keys()]; for(let k=it.order.length-1;k>0;k--){ const r=Math.floor(Math.random()*(k+1)); [it.order[k],it.order[r]]=[it.order[r],it.order[k]]; } }
   it.order.forEach((j)=>{ const t=it.o[j];
-    const b=document.createElement('button'); b.className='opt'; b.textContent=t;
+    const b=document.createElement('button'); b.className='opt'; const label=document.createElement('span'); label.textContent=t; b.append(document.createElement('i'),label);
     b.onclick=()=>{
       if(qanswered)return; qanswered=true;
       if(j===it.a) qscore++;
-      opts.querySelectorAll('.opt').forEach((x,k)=>{ x.disabled=true; const oi=it.order[k]; if(oi===it.a)x.classList.add('right'); else if(oi===j)x.classList.add('wrong'); });
-      document.getElementById('qexp').innerHTML=`<div class="explain"><b style="font-family:var(--sans)">${j===it.a?'Right.':'Not quite.'}</b> ${it.e}</div><div class="row" style="margin-top:14px"><button class="btn" id="qnext">${qi===QUIZ.length-1?'See score':'Next question'}</button></div>`;
+      opts.querySelectorAll('.opt').forEach((x,k)=>{ x.disabled=true; const oi=it.order[k]; if(oi===j)x.classList.add('chosen'); if(oi===it.a)x.classList.add('right'); else if(oi===j)x.classList.add('wrong'); });
+      document.getElementById('qexp').innerHTML=`<div class="explain ${j===it.a?'right':'wrong'}"><b>${j===it.a?'Right.':'Not quite.'}</b> ${it.e}</div><div class="row qactions"><button class="btn" id="qnext">${qi===QUIZ.length-1?'See score':'Next question'}</button></div>`;
       document.getElementById('qnext').onclick=()=>{qi++;renderQuiz();};
       document.getElementById('qnext').focus();
     };
@@ -617,7 +681,7 @@ function renderNotes(){
   const list=document.getElementById('noteslist'); list.innerHTML='';
   const f=nf.value;
   const items=NOTES.filter(n=>f==='all'||n.ch===+f).sort(byPosition);
-  if(!items.length){ list.innerHTML='<p class="prose" style="margin-top:20px">No notes yet. In the reader, drag across a passage to highlight it and add a comment.</p>'; return; }
+  if(!items.length){ list.innerHTML='<div class="empty"><p class="empty-title">No notes yet</p><p>In the reader, drag across a passage to highlight it and add a comment.</p></div>'; return; }
   let lastCh=null, group=null;
   items.forEach(n=>{
     if(n.ch!==lastCh){ lastCh=n.ch; group=document.createElement('div'); group.className='nchap'; const c=CHAPTERS.find(x=>x.id===n.ch)||CHAPTERS[0]; group.innerHTML=`<h3 style="margin:0 0 4px"></h3>`; group.querySelector('h3').textContent=chLabel(c); list.appendChild(group); }
@@ -625,7 +689,7 @@ function renderNotes(){
     const left=document.createElement('div');
     if(n.rects){
       if(pdfDoc){ const cv=document.createElement('canvas'); cv.setAttribute('aria-label',`Highlighted passage on page ${n.page}`); left.appendChild(cv); drawCrop(cv,n); }
-      else left.innerHTML='<p class="small">Open your PDF in the Read step to see the highlighted passage here.</p>';
+      else left.innerHTML='<p class="small">Loading the passage…</p>';
     } else left.innerHTML='<p class="small">Note on the whole page</p>';
     const right=document.createElement('div');
     right.innerHTML=`<p class="small" style="margin:0">Book p. ${n.page}</p><p class="cmt"></p><div class="row"><button class="btn quiet" data-a="go">Go to page</button><button class="btn quiet" data-a="edit">${n.comment?'Edit':'Add comment'}</button></div>`;
@@ -689,7 +753,7 @@ fetch(API+'/progress').then(r=>r.ok?r.json():null).catch(()=>null).then(saved=>{
   S=Object.assign(JSON.parse(JSON.stringify(defaults)),saved);
   start();
 });
-fetch(API+'/pdf').then(r=>{ if(!r.ok) throw new Error(); return r.arrayBuffer(); }).then(openPdf).catch(()=>{ const err=document.getElementById('readerr'); err.textContent='This book’s PDF couldn’t be loaded. Check studybook is still running, then reload.'; });
+fetch(API+'/pdf').then(r=>{ if(!r.ok) throw new Error(); return r.arrayBuffer(); }).then(openPdf).catch(()=>{ const err=document.getElementById('readerr'); err.setAttribute('role','alert'); err.textContent='This book’s PDF couldn’t be loaded. Check studybook is still running, then reload.'; });
 </script>
 </body>
 </html>

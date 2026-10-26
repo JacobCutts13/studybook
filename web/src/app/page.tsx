@@ -10,6 +10,7 @@ export default function Library() {
   const [profile, setProfile] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [fileName, setFileName] = useState("");
 
   const load = useCallback(async () => {
     const response = await fetch("/api/books");
@@ -41,6 +42,7 @@ export default function Library() {
       });
       if (!response.ok) throw new Error((await response.json()).error);
       (form.elements.namedItem("pdf") as HTMLInputElement).value = "";
+      setFileName("");
       await load();
     } catch (e) {
       setError(e instanceof Error && e.message ? e.message : "Upload failed.");
@@ -63,19 +65,31 @@ export default function Library() {
         and everything stays on this computer.
       </p>
 
-      <form className="panel form" onSubmit={upload}>
+      <form className="card form" onSubmit={upload}>
         <div className="field">
-          <label htmlFor="pdf">Book PDF</label>
-          <input
-            id="pdf"
-            name="pdf"
-            type="file"
-            accept="application/pdf"
-            required
-          />
+          <span className="field-label">Book PDF</span>
+          <div className="file">
+            <input
+              id="pdf"
+              name="pdf"
+              type="file"
+              accept="application/pdf"
+              required
+              className="visually-hidden"
+              onChange={(event) =>
+                setFileName(event.target.files?.[0]?.name ?? "")
+              }
+            />
+            <label htmlFor="pdf" className="btn quiet">
+              Choose PDF
+            </label>
+            <span className="file-name">{fileName || "No file chosen"}</span>
+          </div>
         </div>
         <div className="field">
-          <label htmlFor="profile">About you</label>
+          <label htmlFor="profile" className="field-label">
+            About you
+          </label>
           <textarea
             id="profile"
             name="profile"
@@ -100,8 +114,13 @@ export default function Library() {
       </form>
 
       <h2>Your books</h2>
-      <div className="panel">
-        {books?.length === 0 && <p className="empty">No books yet.</p>}
+      {books?.length === 0 && (
+        <div className="empty">
+          <p className="empty-title">No books yet</p>
+          <p>Choose a PDF above to make your first study guide.</p>
+        </div>
+      )}
+      {!!books?.length && (
         <ul className="books">
           {books?.map((book) => (
             <li
@@ -158,7 +177,7 @@ export default function Library() {
             </li>
           ))}
         </ul>
-      </div>
+      )}
     </main>
   );
 }
