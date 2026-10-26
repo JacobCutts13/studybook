@@ -130,4 +130,4 @@ The tests use `local/fake-claude.mjs` in place of Claude Code and an invented sa
 
 ## Licence
 
-MIT
+[MIT](LICENSE). Copyright (c) 2026 Jacob Cutts.

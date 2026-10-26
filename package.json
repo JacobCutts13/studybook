@@ -4,6 +4,11 @@
   "private": true,
   "type": "module",
   "license": "MIT",
+  "author": "Jacob Cutts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JacobCutts13/studybook"
+  },
   "packageManager": "pnpm@10.33.0",
   "scripts": {
     "dev": "pnpm --filter web dev",
