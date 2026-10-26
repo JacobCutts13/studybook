@@ -195,6 +195,26 @@ test("study every chapter, take every quiz, keep a highlight", async () => {
       "notes.json",
     );
     assert.equal(notes[0].comment, "e2e note");
+    // The sidebar lists it beside the page, marked as on this page.
+    await page
+      .locator('.rn-item[aria-current="true"]', { hasText: "e2e note" })
+      .waitFor();
+
+    // Zooming in from fit width makes the page wider; Fit puts it back.
+    const width = () =>
+      page.evaluate(() => document.getElementById("pdfcanvas").clientWidth);
+    const fitted = await width();
+    await page.click("#zoomin");
+    await page.waitForFunction(
+      (w) => document.getElementById("pdfcanvas").clientWidth > w,
+      fitted,
+    );
+    await page.click("#zoomfit");
+    await page.waitForFunction(
+      (w) => document.getElementById("pdfcanvas").clientWidth === w,
+      fitted,
+    );
+
     await page.click('.tab[data-tab="notes"]');
     await page.locator(".note canvas").first().waitFor();
 

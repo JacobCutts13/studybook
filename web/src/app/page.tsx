@@ -63,92 +63,102 @@ export default function Library() {
         and everything stays on this computer.
       </p>
 
-      <form className="card" onSubmit={upload}>
-        <label htmlFor="pdf">Book PDF</label>
-        <input
-          id="pdf"
-          name="pdf"
-          type="file"
-          accept="application/pdf"
-          required
-        />
-        <label htmlFor="profile">About you</label>
-        <textarea
-          id="profile"
-          name="profile"
-          value={profile}
-          onChange={(event) => setProfile(event.target.value)}
-          placeholder="e.g. I’m a product manager at a B2B software company, working on onboarding and pricing."
-        />
-        <p className="hint">
-          Quiz scenarios come from your work. Remembered for next time.
-        </p>
-        <button className="btn" type="submit" disabled={busy}>
-          {busy ? "Uploading…" : "Make study guide"}
-        </button>
-        {error && (
-          <p className="error" role="alert">
-            {error}
+      <form className="panel form" onSubmit={upload}>
+        <div className="field">
+          <label htmlFor="pdf">Book PDF</label>
+          <input
+            id="pdf"
+            name="pdf"
+            type="file"
+            accept="application/pdf"
+            required
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="profile">About you</label>
+          <textarea
+            id="profile"
+            name="profile"
+            value={profile}
+            onChange={(event) => setProfile(event.target.value)}
+            placeholder="e.g. I’m a product manager at a B2B software company, working on onboarding and pricing."
+          />
+          <p className="hint">
+            Quiz scenarios come from your work. Remembered for next time.
           </p>
-        )}
+        </div>
+        <div className="actions">
+          <button className="btn" type="submit" disabled={busy}>
+            {busy ? "Uploading…" : "Make study guide"}
+          </button>
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
+        </div>
       </form>
 
       <h2>Your books</h2>
-      {books?.length === 0 && <p className="empty">No books yet.</p>}
-      {books?.map((book) => (
-        <section
-          className="card book"
-          key={book.id}
-          aria-label={book.title ?? book.filename}
-        >
-          <div className="book-head">
-            <p className="book-title">{book.title ?? book.filename}</p>
-            {book.status === "done" && (
-              <a className="btn" href={`/books/${book.id}`}>
-                Study
-              </a>
-            )}
-            {book.status === "error" && (
-              <button
-                className="btn quiet"
-                type="button"
-                onClick={() => retry(book.id)}
-              >
-                Retry
-              </button>
-            )}
-          </div>
-          <p className="phase" aria-live="polite">
-            {book.phase}
-            {book.message ? `. ${book.message}` : ""}
-          </p>
-          {book.chapters && book.status !== "done" && (
-            <ul className="chips">
-              {book.chapters.map((chapter) => (
-                <li
-                  key={chapter.id}
-                  className={`chip ${chapter.status}`}
-                  title={chapter.status}
-                >
-                  {chapter.label}
-                </li>
-              ))}
-            </ul>
-          )}
-          {book.chapters
-            ?.filter((chapter) => chapter.status === "failed")
-            .map((chapter) => (
-              <details key={chapter.id}>
-                <summary>Why “{chapter.label}” failed</summary>
-                <ul>
-                  {chapter.errors?.map((e) => (
-                    <li key={e}>{e}</li>
+      <div className="panel">
+        {books?.length === 0 && <p className="empty">No books yet.</p>}
+        <ul className="books">
+          {books?.map((book) => (
+            <li
+              className="book"
+              key={book.id}
+              aria-label={book.title ?? book.filename}
+            >
+              <div className="book-head">
+                <p className="book-title">{book.title ?? book.filename}</p>
+                {book.status === "done" && (
+                  <a className="btn" href={`/books/${book.id}`}>
+                    Study
+                  </a>
+                )}
+                {book.status === "error" && (
+                  <button
+                    className="btn quiet"
+                    type="button"
+                    onClick={() => retry(book.id)}
+                  >
+                    Retry
+                  </button>
+                )}
+              </div>
+              <p className="phase" aria-live="polite">
+                {book.phase}
+                {book.message ? `. ${book.message}` : ""}
+              </p>
+              {book.chapters && book.status !== "done" && (
+                <ul className="chips">
+                  {book.chapters.map((chapter) => (
+                    <li
+                      key={chapter.id}
+                      className={`chip ${chapter.status}`}
+                      title={chapter.status}
+                    >
+                      {chapter.label}
+                    </li>
                   ))}
                 </ul>
-              </details>
-            ))}
-        </section>
-      ))}
+              )}
+              {book.chapters
+                ?.filter((chapter) => chapter.status === "failed")
+                .map((chapter) => (
+                  <details key={chapter.id}>
+                    <summary>Why “{chapter.label}” failed</summary>
+                    <ul>
+                      {chapter.errors?.map((e) => (
+                        <li key={e}>{e}</li>
+                      ))}
+                    </ul>
+                  </details>
+                ))}
+            </li>
+          ))}
+        </ul>
+      </div>
     </main>
   );
 }

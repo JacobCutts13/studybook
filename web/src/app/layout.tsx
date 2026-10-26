@@ -6,13 +6,6 @@ export const metadata: Metadata = {
   description: "Turn a book PDF into a study guide with your own Claude Code.",
 };
 
-const FONTS = [
-  "instrument-sans/latin-400.css",
-  "instrument-sans/latin-600.css",
-  "source-serif-4/latin-400.css",
-  "source-serif-4/latin-600.css",
-];
-
 export default function RootLayout({
   children,
 }: {
@@ -21,9 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {FONTS.map((font) => (
-          <link key={font} rel="stylesheet" href={`/vendor/fonts/${font}`} />
-        ))}
+        <link rel="stylesheet" href="/vendor/fonts/inter/index.css" />
       </head>
       <body>{children}</body>
     </html>

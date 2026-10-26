@@ -18,11 +18,8 @@ function resolveAsset(parts: string[]): string | null {
   if (parts.length === 1 && /^pdf(\.worker)?\.min\.js$/.test(parts[0]))
     return join(root("pdfjs-dist"), "build", parts[0]);
   const [kind, pkg, ...rest] = parts;
-  if (
-    kind === "fonts" &&
-    (pkg === "instrument-sans" || pkg === "source-serif-4")
-  )
-    return join(root(`@fontsource/${pkg}`), ...rest);
+  if (kind === "fonts" && pkg === "inter")
+    return join(root("@fontsource-variable/inter"), ...rest);
   return null;
 }
 

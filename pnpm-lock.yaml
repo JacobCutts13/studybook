@@ -24,12 +24,9 @@ importers:
 
   web:
     dependencies:
-      '@fontsource/instrument-sans':
-        specifier: 5.3.0
-        version: 5.3.0
-      '@fontsource/source-serif-4':
-        specifier: 5.3.1
-        version: 5.3.1
+      '@fontsource-variable/inter':
+        specifier: 5.2.8
+        version: 5.2.8
       next:
         specifier: 16.3.5
         version: 16.3.5(@types/node@24.13.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -118,11 +115,8 @@ packages:
   '@emnapi/runtime@1.11.3':
     resolution: {integrity: sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==}
 
-  '@fontsource/instrument-sans@5.3.0':
-    resolution: {integrity: sha512-QwXc4hb/px3XvSPS2CPAOgey8nyrQFxgxrmXQQ+pN+P51hKdAcchxpg8rSbjANFfPu6VKXhDqkVDucXMZ9CM5g==}
-
-  '@fontsource/source-serif-4@5.3.1':
-    resolution: {integrity: sha512-cWcTCXjYYrgF9A67fThVir1VSc0lPEYmwQ6jA4pPt01s2MSCi/maINUcZoCzaqnU8fyUReDO97eGcBUkHgOeug==}
+  '@fontsource-variable/inter@5.2.8':
+    resolution: {integrity: sha512-kOfP2D+ykbcX/P3IFnokOhVRNoTozo5/JxhAIVYLpea/UBmCQ/YWPBfWIDuBImXX/15KH+eKh4xpEUyS2sQQGQ==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -758,9 +752,7 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@fontsource/instrument-sans@5.3.0': {}
-
-  '@fontsource/source-serif-4@5.3.1': {}
+  '@fontsource-variable/inter@5.2.8': {}
 
   '@img/colour@1.1.0':
     optional: true
