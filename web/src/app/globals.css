@@ -328,19 +328,29 @@ textarea::placeholder {
   border: 1px solid var(--border-1);
   border-radius: 10px;
 }
+/* Title and status on the left; the action is centred on the whole row. */
 .book {
   display: grid;
-  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 12px;
+  row-gap: 4px;
+  align-items: center;
   padding: 16px;
 }
 .book + .book {
   border-top: 1px solid var(--border-1);
 }
 .book-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  display: contents;
+}
+.book-head > .btn {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+.book > .chips,
+.book > details {
+  grid-column: 1 / -1;
+  margin-top: 8px;
 }
 .book-title {
   margin: 0;
