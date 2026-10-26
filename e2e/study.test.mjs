@@ -198,12 +198,19 @@ test("study every chapter, take every quiz, keep a highlight", async () => {
     await page.click('.tab[data-tab="notes"]');
     await page.locator(".note canvas").first().waitFor();
 
-    const progress = await until(
-      async () => (await fetch(`${base}/api/books/${book.id}/progress`)).json(),
-      5_000,
-      "progress.json",
+    // Progress saves are debounced, so wait for the one covering every chapter.
+    await until(
+      async () => {
+        const progress = await (
+          await fetch(`${base}/api/books/${book.id}/progress`)
+        ).json();
+        return (
+          Object.keys(progress?.doneBy ?? {}).length === book.chapters.length
+        );
+      },
+      10_000,
+      "progress.json to cover every chapter",
     );
-    assert.equal(Object.keys(progress.doneBy).length, book.chapters.length);
 
     // A fresh browser has no localStorage: everything must come from the server.
     const fresh = await (await browser.newContext()).newPage();
