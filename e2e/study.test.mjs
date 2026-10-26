@@ -123,8 +123,17 @@ test("study every chapter, take every quiz, keep a highlight", async () => {
     // Landing: the particle book and the two ways in.
     await page.goto(base);
     await page.locator(".particle-book canvas").waitFor();
-    await page.getByRole("link", { name: "Create" }).waitFor();
-    await page.getByRole("link", { name: /^Library/ }).click();
+    // The pages are the way in: left opens the library, right starts a new one.
+    assert.equal(
+      await page
+        .getByRole("link", { name: "New study guide" })
+        .getAttribute("href"),
+      "/create",
+    );
+    // Labels ride the swaying book; focusing one stills it. Use the keyboard
+    // path, which is what a keyboard user does.
+    await page.getByRole("link", { name: /^Library/ }).focus();
+    await page.keyboard.press("Enter");
     await page.waitForURL("**/library");
     // Exact, or it also matches the "← studybook" back link.
     await page

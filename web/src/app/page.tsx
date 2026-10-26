@@ -15,7 +15,7 @@ export default function Landing() {
 
   return (
     <main className="hero">
-      <ParticleBook />
+      <ParticleBook libraryCount={count} />
       <div className="hero-copy">
         <h1>studybook</h1>
         <p className="hero-lede">
@@ -23,16 +23,9 @@ export default function Landing() {
           scenario quiz for every chapter. Written by your own Claude Code, kept
           on this computer.
         </p>
-        <div className="hero-actions">
-          <a className="btn quiet large" href="/library">
-            Library
-            {count ? <span className="count">{count}</span> : null}
-          </a>
-          <a className="btn large" href="/create">
-            Create
-          </a>
-        </div>
-        <p className="hero-hint">Drag the book to turn it.</p>
+        <p className="hero-hint">
+          Open a page to begin · drag the book to turn it
+        </p>
       </div>
     </main>
   );

@@ -557,3 +557,84 @@ details ul {
   line-height: 1;
   font-weight: var(--medium);
 }
+
+/* The book's page links: plain buttons without WebGL, labels riding on the
+   pages with it. */
+/* Pages opened from the book fade in, continuing its hand-off. */
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+main:not(.hero) {
+  animation: arrive var(--slow) ease-out;
+}
+.book-stage {
+  position: absolute;
+  inset: 0;
+}
+.book-links {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 38%;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+.book-links.on-book {
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+.page-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bg-1) 78%, transparent);
+  backdrop-filter: blur(6px);
+  color: var(--text-1);
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: var(--bold);
+  white-space: nowrap;
+  text-decoration: none;
+  box-shadow:
+    inset 0 0 0 1px var(--ring-hover),
+    var(--shadow-m);
+  transition:
+    background-color var(--base) ease-in-out,
+    color var(--base) ease-in-out,
+    opacity var(--base) ease-in-out;
+}
+.page-link[data-active="true"],
+.page-link:hover {
+  background: var(--solid);
+  color: var(--on-solid);
+  box-shadow: var(--shadow-m);
+}
+.page-link[data-active="true"] .count,
+.page-link:hover .count {
+  background: color-mix(in srgb, var(--on-solid) 18%, transparent);
+  color: inherit;
+}
+.page-link:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--focus),
+    var(--shadow-m);
+}
+.book-links.on-book .page-link {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: auto;
+  will-change: transform, opacity;
+}
+.book-stage.leaving + .hero-copy {
+  opacity: 0;
+  transition: opacity var(--slow) ease-in-out;
+}
