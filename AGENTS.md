@@ -64,7 +64,8 @@ Simple, futuristic, no clutter. Follow this for every UI change.
 - **The reader stays clean.** No stars or motion behind text you're reading.
 - **Space is always dark; reading follows the system.** The landing, library and create pages are
   dark-only (`web/src/app/globals.css`). The study page (`web/study/template.html`) follows the
-  system light or dark setting, and dissolves in from space when opened from the library.
+  system light or dark setting unless the reader picks Light or Dark in its Appearance menu
+  (saved per browser), and dissolves in from space when opened from the library.
 
 - `pnpm lint && pnpm typecheck && pnpm test`: unit tests plus the whole pipeline, using
   `local/fake-claude.mjs` instead of Claude Code.

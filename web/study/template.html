@@ -65,6 +65,9 @@
   --good-text:#3dd68c; --good-fill:#132d21; --good-bg:#121b17; --good-border:#20573e;
   --bad-text:#ff9592; --bad-fill:#3b1219; --bad-bg:#201314; --bad-border:#72232d;
   --ring:rgba(255,255,255,.10); --ring-hover:rgba(255,255,255,.18);
+  --shadow-s:0 1px 2px rgba(0,0,0,.3),inset 0 0 0 .5px rgba(255,255,255,.06);
+  --shadow-m:0 1px 4px rgba(0,0,0,.3),0 2px 16px rgba(0,0,0,.2),inset 0 0 1px rgba(255,255,255,.1);
+  --shadow-l:0 1px 4px rgba(0,0,0,.35),0 8px 40px rgba(0,0,0,.35),inset 0 0 1px rgba(255,255,255,.1);
   --bevel:inset 0 1px 0 rgba(255,255,255,.5);
   --bold:600;
   color-scheme:dark;
@@ -171,6 +174,12 @@ h3{font-size:14px;line-height:20px;font-weight:var(--bold);margin:24px 0 8px}
 .menu-pop{position:absolute;top:calc(100% + 4px);right:0;z-index:10;display:grid;min-width:160px;padding:4px;border-radius:6px;background:var(--bg-1);box-shadow:var(--shadow-m)}
 .menu-item{appearance:none;display:flex;align-items:center;height:32px;padding:0 8px;border:0;border-radius:4px;background:none;color:var(--text-1);font-size:12px;text-align:left;cursor:pointer}
 .menu-item:hover{background:var(--fill-1)}
+.menu-label{margin:0;padding:6px 8px 4px;color:var(--text-2);font-size:12px}
+.menu-choice{justify-content:space-between;gap:16px}
+.menu-choice input{position:absolute;opacity:0;pointer-events:none}
+.menu-choice::after{content:"✓";visibility:hidden}
+.menu-choice:has(:checked)::after{visibility:visible}
+.menu-choice:has(:focus-visible){outline:2px solid var(--focus);outline-offset:-2px}
 .iconbtn{appearance:none;position:relative;display:inline-grid;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:6px;background:none;color:var(--text-2);cursor:pointer;transition:background-color var(--base) ease-in-out,color var(--base) ease-in-out}
 .iconbtn:hover{background:var(--fill-2);color:var(--text-1)}
 .iconbtn:active{background:var(--fill-3)}
@@ -305,6 +314,7 @@ textarea:focus-visible{border-radius:4px}
 .toast[hidden]{display:none}
 @keyframes slidein{from{opacity:0;transform:translateX(24px)}}
 </style>
+<script>try{const t=localStorage.getItem('studybook-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
 <script>if(/\/library$/.test(document.referrer)) document.documentElement.classList.add('from-space');</script>
 </head>
 <body>
@@ -327,6 +337,15 @@ textarea:focus-visible{border-radius:4px}
         <svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><rect x="2.25" y="3.25" width="13.5" height="11.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M11.25 3.5v11" stroke="currentColor" stroke-width="1.5"/></svg>
         <span class="tip" role="tooltip"><span id="notestip">Hide notes</span><kbd>⌘</kbd><kbd>/</kbd></span>
       </button>
+      <details class="menu" id="thememenu">
+        <summary class="iconbtn" aria-label="Appearance"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></summary>
+        <div class="menu-pop" id="themechoices" role="radiogroup" aria-labelledby="themelabel">
+          <p class="menu-label" id="themelabel">Appearance</p>
+          <label class="menu-item menu-choice">System<input type="radio" name="theme" value="system"></label>
+          <label class="menu-item menu-choice">Light<input type="radio" name="theme" value="light"></label>
+          <label class="menu-item menu-choice">Dark<input type="radio" name="theme" value="dark"></label>
+        </div>
+      </details>
     </div>
   </div>
 </header>
@@ -782,6 +801,18 @@ async function importNotes(file){
 }
 document.getElementById('nexport').onclick=()=>{ document.getElementById('notesmenu').open=false; exportNotes(); };
 document.querySelector('label[for="nimport"]').addEventListener('click',()=>{ document.getElementById('notesmenu').open=false; });
+const themeChoices=document.getElementById('themechoices');
+themeChoices.querySelector(`[value="${document.documentElement.dataset.theme||'system'}"]`).checked=true;
+themeChoices.onchange=e=>{
+  const t=e.target.value;
+  if(t==='system') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme=t;
+  try{ t==='system' ? localStorage.removeItem('studybook-theme') : localStorage.setItem('studybook-theme',t); }catch(err){}
+};
+document.addEventListener('click',e=>{ for(const m of document.querySelectorAll('details.menu[open]')) if(!m.contains(e.target)) m.open=false; });
+document.addEventListener('keydown',e=>{
+  const m=document.querySelector('details.menu[open]');
+  if(e.key==='Escape'&&m){ m.open=false; m.querySelector('summary').focus(); }
+});
 document.getElementById('nimport').onchange=e=>{ const f=e.target.files[0]; if(f) importNotes(f); e.target.value=''; };
 
 /* ---------- Reset ---------- */
