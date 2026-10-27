@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { BookSummary } from "@/lib/books";
+import { PlusIcon } from "../icons";
 
 const ACTIVE = new Set(["queued", "working"]);
 
@@ -40,6 +41,7 @@ export default function Library() {
       <div className="page-head">
         <h1>Library</h1>
         <a className="btn" href="/create">
+          <PlusIcon />
           Create
         </a>
       </div>

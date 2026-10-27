@@ -2,11 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { BookIcon, PlusIcon } from "./icons";
 
 // An open book drawn as points: two arched pages with a block of pages
 // underneath, plus one page that keeps turning. The pages are the way in:
 // the left page (what's already written) opens the library, the right page
-// (the next blank one) starts a new study guide. Their labels are real links
+// (the next one) starts a new study guide. Their labels are real links
 // that ride on the pages, so keyboard, screen readers and new-tab still work.
 
 const PAGE_W = 2;
@@ -89,9 +90,8 @@ export function ParticleBook({
     const max = POINTS_PER_PAGE * layers + POINTS_PER_PAGE;
     const base = new Float32Array(max * 3);
     const shade = new Float32Array(max);
-    // -1 left page, 1 right page, 0 the turning page; text marks top pages.
+    // -1 left page, 1 right page, 0 the turning page.
     const sideOf = new Int8Array(max);
-    const isText = new Uint8Array(max);
     let n = 0;
     for (let side = -1; side <= 1; side += 2)
       for (let layer = 0; layer <= BLOCK_LAYERS; layer++)
@@ -109,14 +109,12 @@ export function ParticleBook({
           base[n * 3 + 2] = arch(u) - layer * 0.035;
           shade[n] = layer === 0 ? 1 : 0.55 - layer * 0.06;
           sideOf[n] = side;
-          isText[n] = layer === 0 ? 1 : 0;
           n++;
         }
     const staticCount = n;
     const turnUv = samplePage(POINTS_PER_PAGE);
     const total = staticCount + POINTS_PER_PAGE;
     shade.fill(0.85, staticCount, total);
-    isText.fill(1, staticCount, total);
 
     const offset = new Float32Array(total * 3);
     const positions = new Float32Array(total * 3);
@@ -135,9 +133,8 @@ export function ParticleBook({
     });
     book.add(new THREE.Points(geometry, material));
 
-    // Hover emphasis, eased each frame: the other page dims, and hovering the
-    // right page clears its text so it reads as a fresh, blank page.
-    const weight = { left: 1, right: 1, rightText: 1 };
+    // Hover emphasis, eased each frame: the other page dims.
+    const weight = { left: 1, right: 1 };
     let turnOnRight = true;
     let colorsDirty = true;
     function paintColors() {
@@ -146,8 +143,7 @@ export function ParticleBook({
       const paper = dark.matches ? 0.071 : 0.98;
       for (let i = 0; i < total; i++) {
         const s = sideOf[i] || (turnOnRight ? 1 : -1);
-        let w = s < 0 ? weight.left : weight.right;
-        if (s > 0 && isText[i]) w *= weight.rightText;
+        const w = s < 0 ? weight.left : weight.right;
         // Three.js expects linear colours, so convert from sRGB, or "paper"
         // would show as visible grey.
         const c = toLinear(paper + (ink - paper) * shade[i] * w);
@@ -396,9 +392,8 @@ export function ParticleBook({
       const target = {
         left: side === "right" ? 0.35 : 1,
         right: side === "left" ? 0.35 : 1,
-        rightText: side === "right" ? 0 : 1,
       };
-      for (const key of ["left", "right", "rightText"] as const) {
+      for (const key of ["left", "right"] as const) {
         const d = target[key] - weight[key];
         if (Math.abs(d) > 0.002) {
           weight[key] += d * 0.12;
@@ -503,10 +498,12 @@ export function ParticleBook({
       <div ref={host} className="particle-book" aria-hidden="true" />
       <nav ref={nav} className="book-links" aria-label="Get started">
         <a ref={leftLink} href="/library" className="page-link">
+          <BookIcon />
           Library
           {libraryCount ? <span className="count">{libraryCount}</span> : null}
         </a>
         <a ref={rightLink} href="/create" className="page-link">
+          <PlusIcon />
           New study guide
         </a>
       </nav>

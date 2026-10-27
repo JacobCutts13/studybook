@@ -638,3 +638,29 @@ main:not(.hero) {
   opacity: 0;
   transition: opacity var(--slow) ease-in-out;
 }
+
+/* Icons in buttons: 18px, pulled into the padding slightly; muted on
+   secondary buttons until hovered. */
+.btn .icon {
+  flex: none;
+  margin-left: -2px;
+}
+.page-link .icon {
+  flex: none;
+  margin-left: -2px;
+  color: var(--icon);
+  transition: color var(--base) ease-in-out;
+}
+.btn.quiet .icon {
+  color: var(--icon);
+  transition: color var(--base) ease-in-out;
+}
+.page-link:hover .icon {
+  color: inherit;
+}
+.page-link[data-active="true"] .icon {
+  color: inherit;
+}
+.btn.quiet:hover .icon {
+  color: inherit;
+}
