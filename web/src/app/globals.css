@@ -572,7 +572,8 @@ main:not(.hero) {
 .shelf > li[data-selected] .volume {
   transform: translateY(-6px);
 }
-.shelf > li:hover .volume,
+/* Keyboard focus wins over a resting pointer, so only one book is pulled. */
+.shelf:not(:has(:focus-visible)) > li:hover .volume,
 .shelf > li .volume:focus-visible {
   transform: translateY(-14px) rotateY(20deg);
 }
