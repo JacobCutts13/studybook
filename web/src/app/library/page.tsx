@@ -8,7 +8,7 @@ const ACTIVE = new Set(["queued", "working"]);
 const STEPS = 3;
 const OPEN_MS = 520;
 
-// The library is a shelf: each book is a spine you can pull out. Its width
+// The library floats in space: each book is a spine you can pull out. Its width
 // follows the chapter count and its marks show progress, one per chapter:
 // written chapters while Claude works, finished chapters once you study.
 // Pulling a finished book turns it to its cover and opens it.
@@ -24,7 +24,7 @@ function summary(book: BookSummary) {
   return `${book.phase}${book.message ? `. ${book.message}` : ""}`;
 }
 
-// A steady, slightly uneven height per book, so the shelf looks lived in.
+// A steady, slightly uneven height per book, so the library looks lived in.
 function spineHeight(id: string) {
   let hash = 0;
   for (const char of id) hash = (hash * 31 + char.charCodeAt(0)) % 997;
@@ -203,7 +203,7 @@ export default function Library() {
             </li>
           ))}
           <li style={{ "--i": books.length } as React.CSSProperties}>
-            {/* The space at the end of the shelf is where the next book goes. */}
+            {/* The empty slot at the end is where the next book goes. */}
             <a
               className="volume ghost"
               href="/create"
@@ -218,8 +218,8 @@ export default function Library() {
       )}
       {books?.length === 0 && (
         <div className="empty">
-          <p className="empty-title">Your shelf is empty</p>
-          <p>Create a study guide from a book PDF and it’ll stand here.</p>
+          <p className="empty-title">Your library is empty</p>
+          <p>Create a study guide from a book PDF and it’ll appear here.</p>
         </div>
       )}
       {detail && (

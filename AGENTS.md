@@ -48,6 +48,21 @@ and don't publish or share the PDFs or the guides anywhere.
 
 ## Working on studybook itself
 
+### Design ethos: a library in space
+
+Simple, futuristic, no clutter. Follow this for every UI change.
+
+- **Black and white only.** Colour is reserved for meaning: green and red for quiz feedback,
+  amber for highlights on the PDF.
+- **Dots are the material.** The same dots are stars in the background, ink on a page, and a
+  book still being written. A finished book is bound solid; an unfinished one is loose dots.
+- **Things float.** No floors, planks or frames for decoration. Objects drift slowly, hold still
+  while you point at them, and respect `prefers-reduced-motion`.
+- **The object is the navigation.** The book's pages, the spines and the chapter marks are real
+  links and buttons, with keyboard and screen-reader paths that work without the animation.
+- **Every element earns its place.** One main action per screen, no ornament without meaning.
+- **The reader stays clean.** No stars or motion behind text you're reading.
+
 - `pnpm lint && pnpm typecheck && pnpm test`: unit tests plus the whole pipeline, using
   `local/fake-claude.mjs` instead of Claude Code.
 - `pnpm e2e:setup && pnpm e2e`: browser test. Stop any `pnpm dev`/`serve` first, because Next

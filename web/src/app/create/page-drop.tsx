@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 // Empty, the dots trace its edge and drift faintly inside; dragging a file
 // over draws them towards the cursor; a chosen book fills the page with
 // lines of text, top to bottom; making the guide binds the page into a
-// spine, the shape it takes on the library shelf.
+// spine, the shape it takes in the library, and it lifts off.
 
 export type PageState = "blank" | "over" | "filled" | "binding";
 
@@ -124,6 +124,10 @@ export function PageDrop({ state }: { state: PageState }) {
           ty = spine[i * 2 + 1];
           alpha = 0.95;
           k *= 1.6;
+          // Once bound, the spine lifts off towards the library.
+          const lift = reduced ? 0 : Math.max(0, since - 0.35);
+          ty -= lift * lift * 4;
+          alpha *= Math.max(0, 1 - lift * 2.5);
         } else {
           tx = blank[i * 2];
           ty = blank[i * 2 + 1];

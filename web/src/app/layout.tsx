@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Starfield } from "./starfield";
 
 export const metadata: Metadata = {
   title: "studybook",
@@ -16,7 +17,10 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" href="/vendor/fonts/inter/index.css" />
       </head>
-      <body>{children}</body>
+      <body>
+        <Starfield />
+        {children}
+      </body>
     </html>
   );
 }

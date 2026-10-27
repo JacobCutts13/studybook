@@ -11,7 +11,7 @@ import {
 import { PlusIcon } from "../icons";
 import { PageDrop, type PageState } from "./page-drop";
 
-// Long enough to see the page bind into a spine before the library.
+// Long enough to see the page bind into a spine and lift off.
 const BIND_MS = 700;
 
 export default function Create() {
