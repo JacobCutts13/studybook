@@ -23,9 +23,6 @@ export default function Landing() {
           scenario quiz for every chapter. Written by your own Claude Code, kept
           on this computer.
         </p>
-        <p className="hero-hint">
-          Open a page to begin · drag the book to turn it
-        </p>
       </div>
     </main>
   );

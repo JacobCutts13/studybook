@@ -206,13 +206,6 @@ h2 {
   max-width: 60ch;
 }
 
-/* Card */
-.card {
-  background: var(--bg-1);
-  border: 1px solid var(--border-1);
-  border-radius: 10px;
-  box-shadow: var(--shadow-s);
-}
 .form {
   padding: 16px;
   display: grid;
@@ -364,25 +357,6 @@ details ul {
   margin: 4px 0 0;
   padding-left: 16px;
 }
-/* Empty state */
-.empty {
-  padding: 32px;
-  text-align: center;
-  background: var(--bg-1);
-  border: 1px solid var(--border-1);
-  border-radius: 10px;
-}
-.empty p {
-  margin: 0 auto;
-  max-width: 62ch;
-  color: var(--text-2);
-}
-.empty .empty-title {
-  margin-bottom: 4px;
-  color: var(--text-1);
-  font-weight: var(--bold);
-}
-
 /* Space: the starfield behind every page but the reader. */
 .starfield {
   position: fixed;
@@ -448,17 +422,6 @@ details ul {
   gap: 12px;
   pointer-events: auto;
 }
-.hero-hint {
-  margin: 0;
-  color: var(--text-2);
-  font-size: 12px;
-  line-height: 16px;
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-hint {
-    display: none;
-  }
-}
 
 /* Large button */
 .btn.large {
@@ -479,9 +442,6 @@ details ul {
 }
 .page-head h1 {
   margin: 0;
-}
-.page-head + .empty {
-  margin-top: 24px;
 }
 
 /* Back link */
@@ -576,12 +536,14 @@ main:not(.hero) {
     color var(--base) ease-in-out,
     opacity var(--base) ease-in-out;
 }
+.page-link.primary,
 .page-link[data-active="true"],
 .page-link:hover {
   background: var(--solid);
   color: var(--on-solid);
   box-shadow: var(--shadow-m);
 }
+.page-link.primary .count,
 .page-link[data-active="true"] .count,
 .page-link:hover .count {
   background: color-mix(in srgb, var(--on-solid) 18%, transparent);
@@ -620,6 +582,7 @@ main:not(.hero) {
   color: var(--icon);
   transition: color var(--base) ease-in-out;
 }
+.page-link.primary .icon,
 .page-link:hover .icon {
   color: inherit;
 }
@@ -694,10 +657,10 @@ main:not(.hero) {
   transform: translateY(-6px);
 }
 .shelf > li:hover .volume,
-.volume:focus-visible {
+.shelf > li .volume:focus-visible {
   transform: translateY(-14px) rotateY(20deg);
 }
-.volume:focus-visible {
+.shelf > li .volume:focus-visible {
   box-shadow: none;
 }
 /* Opening: pull the book out and turn it to its cover. */
@@ -840,14 +803,12 @@ main:not(.hero) {
     animation: none;
   }
 }
+/* What you're pointing at, as plain text beneath the books. */
 .shelf-detail {
   display: grid;
   gap: 8px;
-  margin-top: 24px;
-  padding: 16px;
-  background: var(--bg-1);
-  border: 1px solid var(--border-1);
-  border-radius: 10px;
+  margin-top: 32px;
+  padding: 0 16px;
 }
 .detail-head {
   display: flex;
@@ -864,8 +825,18 @@ main:not(.hero) {
 /* Create: a blank page in dots is the file drop. */
 .create-form {
   grid-template-columns: 200px minmax(0, 1fr);
-  gap: 24px;
+  gap: 32px;
   align-items: start;
+  padding: 0;
+}
+/* The page floats like the books in the library. */
+.drop {
+  animation: drift 7s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .drop {
+    animation: none;
+  }
 }
 .create-fields {
   display: grid;
@@ -909,7 +880,7 @@ main:not(.hero) {
   max-width: 100%;
   padding: 8px 12px;
   border-radius: 6px;
-  background: color-mix(in srgb, var(--bg-1) 82%, transparent);
+  background: color-mix(in srgb, var(--bg-2) 85%, transparent);
   text-align: center;
   transition: opacity var(--base) ease-in-out;
 }

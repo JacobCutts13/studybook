@@ -82,7 +82,7 @@ export default function Create() {
         Claude reads each chapter and writes a preview and a scenario quiz. A
         book usually takes a few minutes, and you can follow it in the library.
       </p>
-      <form className="card form create-form" onSubmit={upload}>
+      <form className="form create-form" onSubmit={upload}>
         <div className="drop">
           <input
             ref={input}

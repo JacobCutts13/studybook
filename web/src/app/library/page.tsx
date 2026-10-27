@@ -19,8 +19,10 @@ const finished = (book: BookSummary) =>
 
 function summary(book: BookSummary) {
   const chapters = book.chapters?.length ?? 0;
-  if (book.status === "done")
-    return `${chapters} chapters · ${finished(book)} finished`;
+  if (book.status === "done") {
+    const done = finished(book);
+    return `${chapters} chapters${done ? ` · ${done} finished` : ""}`;
+  }
   return `${book.phase}${book.message ? `. ${book.message}` : ""}`;
 }
 
@@ -181,10 +183,6 @@ export default function Library() {
       </a>
       <div className="page-head">
         <h1>Library</h1>
-        <a className="btn" href="/create">
-          <PlusIcon />
-          Create
-        </a>
       </div>
       {books && (
         <ul className="shelf" data-opening={opening ? true : undefined}>
@@ -208,6 +206,7 @@ export default function Library() {
               className="volume ghost"
               href="/create"
               aria-label="New study guide"
+              title="New study guide"
             >
               <span className="spine">
                 <PlusIcon />
@@ -217,10 +216,12 @@ export default function Library() {
         </ul>
       )}
       {books?.length === 0 && (
-        <div className="empty">
-          <p className="empty-title">Your library is empty</p>
-          <p>Create a study guide from a book PDF and it’ll appear here.</p>
-        </div>
+        <section className="shelf-detail">
+          <p className="book-title">Your library is empty</p>
+          <p className="phase">
+            Add a book PDF to make your first study guide.
+          </p>
+        </section>
       )}
       {detail && (
         <section

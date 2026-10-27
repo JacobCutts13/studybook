@@ -502,7 +502,12 @@ export function ParticleBook({
           Library
           {libraryCount ? <span className="count">{libraryCount}</span> : null}
         </a>
-        <a ref={rightLink} href="/create" className="page-link">
+        {/* With nothing in the library yet, starting one is the main action. */}
+        <a
+          ref={rightLink}
+          href="/create"
+          className={`page-link${libraryCount === 0 ? " primary" : ""}`}
+        >
           <PlusIcon />
           New study guide
         </a>
