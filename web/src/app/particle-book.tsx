@@ -63,7 +63,6 @@ export function ParticleBook({
     const stageEl = stage.current;
     const navEl = nav.current;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const dark = matchMedia("(prefers-color-scheme: dark)");
 
     let renderer: THREE.WebGLRenderer;
     try {
@@ -138,9 +137,9 @@ export function ParticleBook({
     let turnOnRight = true;
     let colorsDirty = true;
     function paintColors() {
-      // Paper matches the page background exactly (#121113 / #faf9fb).
-      const ink = dark.matches ? 1 : 0.07;
-      const paper = dark.matches ? 0.071 : 0.98;
+      // Paper matches the page background exactly (#121113).
+      const ink = 1;
+      const paper = 0.071;
       for (let i = 0; i < total; i++) {
         const s = sideOf[i] || (turnOnRight ? 1 : -1);
         const w = s < 0 ? weight.left : weight.right;
@@ -151,10 +150,6 @@ export function ParticleBook({
       }
       colorAttr.needsUpdate = true;
     }
-    const onTheme = () => {
-      colorsDirty = true;
-    };
-    dark.addEventListener("change", onTheme);
 
     function placeTurningPage(angle: number, curl: number) {
       turnOnRight = angle < Math.PI / 2;
@@ -477,7 +472,6 @@ export function ParticleBook({
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
-      dark.removeEventListener("change", onTheme);
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerdown", onDown);
       canvas.removeEventListener("pointerup", onUp);

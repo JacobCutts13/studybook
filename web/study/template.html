@@ -294,12 +294,18 @@ textarea:hover{border-color:var(--border-3)}
 textarea::placeholder{color:var(--text-2)}
 textarea:focus-visible{border-radius:4px}
 @keyframes fade{from{opacity:0}}
+/* Arriving from the library (always dark, it's space): dissolve from space
+   to this page's theme instead of switching in one frame. */
+.from-space body{animation:from-space calc(var(--slow) * 1.5) ease-out}
+.from-space body>:is(header,main){animation:fade calc(var(--slow) * 1.5) ease-out}
+@keyframes from-space{from{background-color:#121113}}
 @keyframes rise{from{opacity:0;transform:translateY(16px) scale(.96)}}
 /* Toast */
 .toast{position:fixed;right:24px;bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:30;width:360px;max-width:calc(100vw - 48px);padding:12px;border-radius:4px;background:var(--bg-1);color:var(--text-1);box-shadow:var(--shadow-m);animation:slidein var(--slow) ease-out}
 .toast[hidden]{display:none}
 @keyframes slidein{from{opacity:0;transform:translateX(24px)}}
 </style>
+<script>if(/\/library$/.test(document.referrer)) document.documentElement.classList.add('from-space');</script>
 </head>
 <body>
 <header class="bar">

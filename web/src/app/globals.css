@@ -1,110 +1,9 @@
-/* Colours: Radix Colors (MIT, github.com/radix-ui/colors). Black and white
-   (mauve), with green / red only for quiz feedback and amber for highlights
-   on the page. Components follow common product-UI specs: 32px
+/* Colours: Radix Colors (MIT, github.com/radix-ui/colors), dark mauve.
+   These pages are always dark: they're the space the library floats in.
+   The study page (study/template.html) is where you read, so it follows
+   the system theme instead. Components follow common product-UI specs: 32px
    controls, 6px radii, 14/20 body text. */
 :root {
-  --bg-1: #ffffff;
-  --bg-2: #faf9fb;
-  --fill-1: #f2eff3;
-  --fill-2: #eae7ec;
-  --fill-3: #e3dfe6;
-  --border-1: #e3dfe6;
-  --border-2: #dbd8e0;
-  --border-3: #d0cdd7;
-  --radio: #bcbac7;
-  --solid: #211f26;
-  --solid-hover: #121113;
-  --solid-disabled: #8e8c99;
-  --on-solid: #ffffff;
-  --text-1: #211f26;
-  --text-2: #65636d;
-  --icon: #8e8c99;
-  --accent: #211f26;
-  --accent-text: #211f26;
-  --accent-fill: #eae7ec;
-  --accent-border: #d0cdd7;
-  --focus: #211f26;
-  --mark: #e3dfe6;
-  --mark-solid: #ffc53d;
-  --good-text: #218358;
-  --good-fill: #e6f6eb;
-  --good-bg: #f4fbf6;
-  --good-border: #adddc0;
-  --bad-text: #ce2c31;
-  --bad-fill: #feebec;
-  --bad-bg: #fff7f7;
-  --bad-border: #fdbdbe;
-  --ring: rgba(0, 0, 0, 0.08);
-  --ring-hover: rgba(0, 0, 0, 0.16);
-  --shadow-s:
-    0 1px 2px rgba(33, 31, 38, 0.06), 0 1px 1px rgba(33, 31, 38, 0.04);
-  --shadow-m:
-    0 1px 4px rgba(33, 31, 38, 0.12), 0 2px 16px rgba(33, 31, 38, 0.08);
-  --shadow-l:
-    0 1px 4px rgba(33, 31, 38, 0.16), 0 8px 40px rgba(33, 31, 38, 0.16);
-  --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.14);
-  --scrim: rgba(0, 0, 0, 0.447);
-  /* Highlights sit on the PDF page, which is always white. */
-  --page-hl: rgba(255, 197, 61, 0.42);
-  --medium: 475;
-  --bold: 550;
-  --fast: 75ms;
-  --base: 150ms;
-  --slow: 300ms;
-  --font:
-    "Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  --bar-h: 48px;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-1: #1a191b;
-    --bg-2: #121113;
-    --fill-1: #232225;
-    --fill-2: #2b292d;
-    --fill-3: #323035;
-    --border-1: #2b292d;
-    --border-2: #323035;
-    --border-3: #49474e;
-    --radio: #625f69;
-    --solid: #eeeef0;
-    --solid-hover: #ffffff;
-    --solid-disabled: #6f6d78;
-    --on-solid: #121113;
-    --text-1: #eeeef0;
-    --text-2: #b5b2bc;
-    --icon: #7c7a85;
-    --accent: #eeeef0;
-    --accent-text: #eeeef0;
-    --accent-fill: #2b292d;
-    --accent-border: #49474e;
-    --focus: #eeeef0;
-    --mark: #3c393f;
-    --mark-solid: #ffc53d;
-    --good-text: #3dd68c;
-    --good-fill: #132d21;
-    --good-bg: #121b17;
-    --good-border: #20573e;
-    --bad-text: #ff9592;
-    --bad-fill: #3b1219;
-    --bad-bg: #201314;
-    --bad-border: #72232d;
-    --ring: rgba(255, 255, 255, 0.1);
-    --ring-hover: rgba(255, 255, 255, 0.18);
-    --shadow-s:
-      0 1px 2px rgba(0, 0, 0, 0.3), inset 0 0 0 0.5px rgba(255, 255, 255, 0.06);
-    --shadow-m:
-      0 1px 4px rgba(0, 0, 0, 0.3), 0 2px 16px rgba(0, 0, 0, 0.2),
-      inset 0 0 1px rgba(255, 255, 255, 0.1);
-    --shadow-l:
-      0 1px 4px rgba(0, 0, 0, 0.35), 0 8px 40px rgba(0, 0, 0, 0.35),
-      inset 0 0 1px rgba(255, 255, 255, 0.1);
-    --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    --bold: 600;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
   --bg-1: #1a191b;
   --bg-2: #121113;
   --fill-1: #232225;
@@ -138,8 +37,25 @@
   --bad-border: #72232d;
   --ring: rgba(255, 255, 255, 0.1);
   --ring-hover: rgba(255, 255, 255, 0.18);
+  --shadow-s:
+    0 1px 2px rgba(0, 0, 0, 0.3), inset 0 0 0 0.5px rgba(255, 255, 255, 0.06);
+  --shadow-m:
+    0 1px 4px rgba(0, 0, 0, 0.3), 0 2px 16px rgba(0, 0, 0, 0.2),
+    inset 0 0 1px rgba(255, 255, 255, 0.1);
+  --shadow-l:
+    0 1px 4px rgba(0, 0, 0, 0.35), 0 8px 40px rgba(0, 0, 0, 0.35),
+    inset 0 0 1px rgba(255, 255, 255, 0.1);
   --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  --scrim: rgba(0, 0, 0, 0.447);
+  --page-hl: rgba(255, 197, 61, 0.42);
+  --medium: 475;
   --bold: 600;
+  --fast: 75ms;
+  --base: 150ms;
+  --slow: 300ms;
+  --font:
+    "Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --bar-h: 48px;
   color-scheme: dark;
 }
 @media (prefers-reduced-motion: reduce) {
