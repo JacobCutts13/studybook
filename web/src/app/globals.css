@@ -252,13 +252,20 @@ textarea::placeholder {
   background: var(--fill-1);
   color: var(--text-1);
 }
-.chip.done {
-  background: var(--good-fill);
-  color: var(--good-text);
+/* Same language as the spine marks: done is solid, waiting is faint,
+   writing pulses. Red is kept for a chapter that needs you. */
+.chip.waiting {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--border-2);
+  color: var(--text-2);
 }
 .chip.writing {
-  background: var(--accent-fill);
-  color: var(--accent-text);
+  animation: writing-chip 1.2s ease-in-out infinite alternate;
+}
+@keyframes writing-chip {
+  to {
+    background: var(--fill-3);
+  }
 }
 .chip.failed {
   background: var(--bad-fill);
@@ -716,7 +723,8 @@ main:not(.hero) {
 @media (prefers-reduced-motion: reduce) {
   .shelf > li,
   .volume[data-status] .spine,
-  .marks i {
+  .marks i,
+  .chip.writing {
     animation: none;
   }
 }

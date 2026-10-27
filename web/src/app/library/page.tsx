@@ -13,7 +13,9 @@ const OPEN_MS = 520;
 // written chapters while Claude works, finished chapters once you study.
 // Pulling a finished book turns it to its cover and opens it.
 
-const title = (book: BookSummary) => book.title ?? book.filename;
+// Before Claude finds the real title, show the file name without its extension.
+const title = (book: BookSummary) =>
+  book.title ?? book.filename.replace(/\.pdf$/i, "");
 const finished = (book: BookSummary) =>
   Object.values(book.studied ?? {}).filter((steps) => steps >= STEPS).length;
 
@@ -221,6 +223,12 @@ export default function Library() {
           <p className="phase">
             Add a book PDF to make your first study guide.
           </p>
+          <div>
+            <a className="btn" href="/create">
+              <PlusIcon />
+              New study guide
+            </a>
+          </div>
         </section>
       )}
       {detail && (
