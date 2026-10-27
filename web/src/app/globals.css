@@ -517,7 +517,7 @@ main:not(.hero) {
   align-items: center;
   gap: 32px 12px;
   margin: 40px 0 0;
-  padding: 0 16px;
+  padding: 0;
   list-style: none;
 }
 .shelf > li {
@@ -724,13 +724,12 @@ main:not(.hero) {
   display: grid;
   gap: 8px;
   margin-top: 32px;
-  padding: 0 16px;
 }
+/* The action sits beside the book it opens, not across the page. */
 .detail-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 24px;
 }
 .detail-head > div {
   display: grid;
