@@ -64,12 +64,26 @@ export async function listBooks() {
   const books = await Promise.all(
     ids.map(async (id) => {
       const dir = join(BOOKS_DIR, id);
-      const [state, job] = await Promise.all([
+      const [state, job, progress] = await Promise.all([
         readState(dir),
         readJson(join(dir, "job.json")),
+        readJson(join(dir, "progress.json")),
       ]);
+      // How many study steps (preview, read, quiz) each chapter has done.
+      const studied = Object.fromEntries(
+        Object.entries(progress?.doneBy ?? {}).map(([chapter, steps]) => [
+          chapter,
+          Object.values(steps).filter(Boolean).length,
+        ]),
+      );
       return state && job
-        ? { ...state, id, filename: job.filename, createdAt: job.createdAt }
+        ? {
+            ...state,
+            id,
+            filename: job.filename,
+            createdAt: job.createdAt,
+            studied,
+          }
         : null;
     }),
   );

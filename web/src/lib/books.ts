@@ -25,6 +25,7 @@ export type BookSummary = BookState & {
   id: string;
   filename: string;
   createdAt: string;
+  studied: Record<string, number>;
 };
 
 export const { bookDir, isPdf, savedProfile } = books;

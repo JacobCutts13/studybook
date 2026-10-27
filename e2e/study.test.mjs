@@ -135,6 +135,8 @@ test("study every chapter, take every quiz, keep a highlight", async () => {
     await page.getByRole("link", { name: /^Library/ }).focus();
     await page.keyboard.press("Enter");
     await page.waitForURL("**/library");
+    // The finished book stands on the shelf as a spine you can open.
+    await page.locator('.shelf a.volume[data-status="done"]').waitFor();
     // Exact, or it also matches the "← studybook" back link.
     await page
       .getByRole("link", { name: "Study", exact: true })
@@ -142,6 +144,10 @@ test("study every chapter, take every quiz, keep a highlight", async () => {
       .click();
     await page.waitForURL(`**/books/${book.id}*`);
     await page.locator("#reader:not([hidden])").waitFor({ state: "attached" });
+    assert.equal(
+      await page.locator("#chapmarks button").count(),
+      book.chapters.length,
+    );
 
     for (const c of book.chapters) {
       const n = c.end - c.start + 1;
@@ -187,6 +193,12 @@ test("study every chapter, take every quiz, keep a highlight", async () => {
         `${c.quiz.length}/${c.quiz.length}`,
       );
     }
+
+    // Every quiz taken: no chapter's mark is still empty.
+    assert.equal(
+      await page.locator('#chapmarks button[data-state="none"]').count(),
+      0,
+    );
 
     const c = book.chapters[1];
     await page.selectOption("#chapsel", String(c.id));

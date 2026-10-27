@@ -248,17 +248,6 @@ textarea:hover {
 textarea::placeholder {
   color: var(--text-2);
 }
-.file {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.file-name {
-  color: var(--text-2);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 .actions {
   display: flex;
   align-items: center;
@@ -320,34 +309,6 @@ textarea::placeholder {
   margin: 0;
 }
 
-/* Bordered list */
-.books {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  background: var(--bg-1);
-  border: 1px solid var(--border-1);
-  border-radius: 10px;
-}
-/* Title and status on the left; the action is centred on the whole row. */
-.book {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  column-gap: 12px;
-  row-gap: 4px;
-  align-items: center;
-  padding: 16px;
-}
-.book + .book {
-  border-top: 1px solid var(--border-1);
-}
-.book-head {
-  display: contents;
-}
-.book-head > .btn {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-}
 .book-title {
   margin: 0;
   font-weight: var(--bold);
@@ -402,11 +363,6 @@ details {
 details ul {
   margin: 4px 0 0;
   padding-left: 16px;
-}
-.book > .chips,
-.book > details {
-  grid-column: 1 / -1;
-  margin-top: 8px;
 }
 /* Empty state */
 .empty {
@@ -514,7 +470,6 @@ details ul {
 .page-head h1 {
   margin: 0;
 }
-.page-head + .books,
 .page-head + .empty {
   margin-top: 24px;
 }
@@ -663,4 +618,319 @@ main:not(.hero) {
 }
 .btn.quiet:hover .icon {
   color: inherit;
+}
+
+/* Library: a shelf of spines. Finished books are bound in ink; books still
+   being written are loose dots, drifting like the landing book's particles. */
+.shelf {
+  --row: 260px;
+  --pitch: 288px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 28px 6px;
+  margin: 24px 0 0;
+  padding: 0 16px 8px;
+  list-style: none;
+  background:
+    linear-gradient(
+      to bottom,
+      transparent var(--row),
+      var(--solid) var(--row) calc(var(--row) + 3px),
+      color-mix(in srgb, var(--solid) 8%, transparent) calc(var(--row) + 3px),
+      transparent calc(var(--row) + 14px)
+    )
+    0 0 / 100% var(--pitch);
+}
+.shelf > li {
+  position: relative;
+  height: var(--row);
+  display: flex;
+  align-items: flex-end;
+  perspective: 700px;
+  animation: shelve var(--slow) ease-out backwards;
+  animation-delay: calc(var(--i) * 40ms);
+}
+.shelf > li:hover,
+.shelf > li:focus-within {
+  z-index: 1;
+}
+@keyframes shelve {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+.volume {
+  --d: 140px;
+  position: relative;
+  display: block;
+  width: var(--w, 40px);
+  height: var(--h, 200px);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transform-origin: 50% 100% calc(var(--d) / -2);
+  transition:
+    transform var(--slow) cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity var(--slow) ease-in-out;
+}
+.shelf > li[data-selected] .volume {
+  transform: translateY(-6px);
+}
+.shelf > li:hover .volume,
+.volume:focus-visible {
+  transform: translateY(-14px) rotateY(20deg);
+}
+.volume:focus-visible {
+  box-shadow: none;
+}
+/* Opening: pull the book out and turn it to its cover. */
+.shelf > li .volume[data-opening] {
+  transform: translateY(-48px) translateZ(180px) rotateY(90deg);
+  transition-duration: 520ms;
+}
+.shelf[data-opening] > li:not([data-selected]) .volume {
+  opacity: 0.2;
+}
+.spine,
+.cover {
+  position: absolute;
+  backface-visibility: hidden;
+  background-color: var(--solid);
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--on-solid) 16%, transparent) 0.7px,
+    transparent 1.1px
+  );
+  background-size: 4px 4px;
+  color: var(--on-solid);
+}
+.spine {
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0 10px;
+  border-radius: 3px 3px 2px 2px;
+  box-shadow:
+    inset 2px 0 0 rgba(255, 255, 255, 0.08),
+    inset -3px 0 0 rgba(0, 0, 0, 0.2),
+    var(--shadow-s);
+}
+.volume:focus-visible .spine {
+  box-shadow:
+    0 0 0 2px var(--bg-2),
+    0 0 0 4px var(--focus);
+}
+.spine-title {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--bold);
+  letter-spacing: 0.01em;
+}
+.marks {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.marks i {
+  width: 10px;
+  height: 3px;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0.25;
+}
+.marks i[data-state="part"] {
+  opacity: 0.6;
+}
+.marks i[data-state="full"] {
+  opacity: 1;
+}
+.marks i[data-state="failed"] {
+  background: var(--bad-text);
+  opacity: 1;
+}
+.marks i[data-state="writing"] {
+  animation: writing 1.2s ease-in-out infinite alternate;
+}
+@keyframes writing {
+  to {
+    opacity: 1;
+  }
+}
+.cover {
+  top: 0;
+  right: 100%;
+  width: var(--d);
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  border-radius: 2px 4px 4px 2px;
+  transform-origin: right center;
+  transform: rotateY(-90deg);
+}
+.cover-title {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: var(--bold);
+  text-wrap: balance;
+}
+/* Still being written: loose dots that drift upward until it's bound. */
+.volume:not([data-status="done"]) .spine,
+.volume:not([data-status="done"]) .cover {
+  background-color: transparent;
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--text-1) 38%, transparent) 0.8px,
+    transparent 1.2px
+  );
+  color: var(--text-1);
+  box-shadow: inset 0 0 0 1px var(--border-3);
+}
+.volume[data-status="working"] .spine,
+.volume[data-status="queued"] .spine {
+  animation: assemble 3s linear infinite;
+}
+@keyframes assemble {
+  to {
+    background-position: 0 -16px;
+  }
+}
+.volume.ghost {
+  width: 40px;
+  height: 200px;
+}
+.volume.ghost .spine {
+  justify-content: center;
+  background: none;
+  color: var(--icon);
+  box-shadow: none;
+  outline: 1px dashed var(--border-3);
+  transition: color var(--base) ease-in-out;
+}
+.volume.ghost:hover .spine {
+  color: var(--text-1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .volume[data-status] .spine,
+  .marks i {
+    animation: none;
+  }
+}
+.shelf-detail {
+  display: grid;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 16px;
+  background: var(--bg-1);
+  border: 1px solid var(--border-1);
+  border-radius: 10px;
+}
+.detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.detail-head > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* Create: a blank page in dots is the file drop. */
+.create-form {
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.create-fields {
+  display: grid;
+  gap: 20px;
+}
+.create-fields textarea {
+  min-height: 160px;
+}
+.page-drop {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 2 / 2.7;
+  border-radius: 4px;
+  color: var(--text-1);
+  cursor: pointer;
+  transition: transform var(--slow) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.page-drop[data-state="over"] {
+  transform: scale(1.03);
+}
+.page-drop[data-state="binding"] {
+  transform: translateY(-8px);
+}
+:focus-visible + .page-drop {
+  box-shadow:
+    0 0 0 2px var(--bg-1),
+    0 0 0 4px var(--focus);
+}
+.page-dots {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.page-drop-label {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--bg-1) 82%, transparent);
+  text-align: center;
+  transition: opacity var(--base) ease-in-out;
+}
+.page-drop-icon {
+  display: flex;
+  color: var(--icon);
+}
+.page-drop-name {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--bold);
+}
+.page-drop:hover .page-drop-name,
+.page-drop[data-state="over"] .page-drop-name {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+/* Once chosen, the name sits at the foot of the filled page. */
+.page-drop[data-state="filled"] .page-drop-label {
+  align-self: end;
+  margin-bottom: 12px;
+}
+.page-drop[data-state="binding"] .page-drop-label {
+  opacity: 0;
+}
+@media (max-width: 560px) {
+  .create-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page-drop {
+    width: 200px;
+    justify-self: center;
+  }
 }

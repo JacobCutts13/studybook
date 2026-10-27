@@ -108,6 +108,16 @@ mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 2px}
 /* Select */
 .chapsel{appearance:none;height:30px;padding:0 32px 0 12px;border:1px solid var(--border-1);border-radius:6px;background:var(--bg-1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%238e8c99' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 8px center/16px no-repeat;font-size:12px;line-height:16px;max-width:280px;cursor:pointer;transition:border-color var(--base) ease-in-out}
 .chapsel:hover,.chapsel:focus-visible{border-color:var(--border-3)}
+/* Chapter marks: the book's spine laid flat, one mark per chapter, filled
+   as its steps are done. Same marks as on the library shelf. */
+.chapmarks{display:flex;align-items:center;height:30px}
+.chapmarks button{appearance:none;display:grid;place-items:center;width:7px;height:24px;padding:0;border:0;background:none;color:var(--text-1);cursor:pointer}
+.chapmarks button::before{content:"";width:3px;height:12px;border-radius:1px;background:currentColor;opacity:.25;transition:height var(--base) ease-in-out,opacity var(--base) ease-in-out}
+.chapmarks button[data-state="part"]::before{opacity:.6}
+.chapmarks button[data-state="full"]::before{opacity:1}
+.chapmarks button:hover::before{height:16px}
+.chapmarks button[aria-current="true"]::before{height:20px}
+.chapmarks button:focus-visible{box-shadow:0 0 0 2px var(--focus)}
 .chap-pick{font-size:12px;line-height:16px;color:var(--text-2);white-space:nowrap}
 @media (max-width:820px){
   .bar-inner{row-gap:0;padding-top:6px}
@@ -115,6 +125,7 @@ mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 2px}
   .book{max-width:45vw}
   .chap-pick{display:none}
 }
+@media (max-width:560px){.chapmarks{display:none}}
 
 /* Pages other than Read */
 main{max-width:720px;margin:0 auto;padding:32px 24px 80px}
@@ -290,6 +301,7 @@ textarea:focus-visible{border-radius:4px}
       <button class="tab" role="tab" data-tab="notes">My notes <span class="count" id="notecount"></span></button>
     </nav>
     <div class="bar-end">
+      <div class="chapmarks" id="chapmarks" role="group" aria-label="Chapters"></div>
       <label class="visually-hidden" for="chapsel">Chapter</label><select id="chapsel" class="chapsel"></select>
       <span class="chap-pick" id="overall">0 of 3 steps done</span>
       <button class="iconbtn" id="notestoggle" aria-controls="readnotes" aria-pressed="true" aria-label="Notes in this chapter" hidden>
@@ -432,6 +444,14 @@ function paintDone(){
   const dn=S.doneBy[S.ch]||{};
   TABS.forEach(t=>{ const d=!!dn[t]; if(d)n++; document.querySelector(`.tab[data-tab="${t}"]`).classList.toggle('done',d); });
   document.getElementById('overall').textContent = `${n} of ${TABS.length} steps done`;
+  document.querySelectorAll('#chapmarks button').forEach(b=>{
+    const c=CHAPTERS.find(x=>x.id===+b.dataset.ch);
+    const steps=Object.values(S.doneBy[c.id]||{}).filter(Boolean).length;
+    b.dataset.state=steps>=TABS.length?'full':steps?'part':'none';
+    b.setAttribute('aria-current',String(c.id===S.ch));
+    b.title=`${chLabel(c)} · ${steps} of ${TABS.length} steps`;
+    b.setAttribute('aria-label',b.title);
+  });
 }
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>show(b.dataset.tab));
 document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>{ if(b.dataset.complete) complete(b.dataset.complete); show(b.dataset.goto); }));
@@ -755,6 +775,8 @@ const resetBtn=document.getElementById('reset'); if(resetBtn) resetBtn.onclick=(
 const chapSel=document.getElementById('chapsel');
 CHAPTERS.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=chLabel(c); chapSel.appendChild(o); });
 chapSel.onchange=e=>{ setChapter(+e.target.value); show(cur().built||curTab==='notes'?curTab:'read'); };
+const chapMarks=document.getElementById('chapmarks');
+CHAPTERS.forEach(c=>{ const b=document.createElement('button'); b.type='button'; b.dataset.ch=c.id; b.onclick=()=>{ setChapter(c.id); show(curTab); }; chapMarks.appendChild(b); });
 document.getElementById('soonread').onclick=()=>show('read');
 // Draw straight away from this browser's copy, then switch to the saved
 // progress in the book folder if it's different (e.g. a new browser).
