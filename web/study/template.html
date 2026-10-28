@@ -727,7 +727,7 @@ document.getElementById('nmsave').onclick=()=>{
   if(!editing.rects&&!text){ nmtext.focus(); return; }
   editing.comment=text; const n=editing; closeNote(); upsertNote(n);
 };
-document.getElementById('nmdelete').onclick=()=>{ if(!confirm('Delete this note?')) return; const id=editing.id; closeNote(); deleteNote(id); };
+document.getElementById('nmdelete').onclick=()=>{ const id=editing.id; closeNote(); deleteNote(id); };
 // notes view
 const pageCache={};
 async function pageImage(num){
