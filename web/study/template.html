@@ -607,8 +607,11 @@ function renderQuiz(){
   if(qi>=QUIZ.length){
     const pb=S.bestBy[S.ch]; if(pb===undefined||pb===null||qscore>pb){S.bestBy[S.ch]=qscore;}
     complete('quiz'); save();
-    box.innerHTML=`<p class="small">Your score</p><p class="score">${qscore}/${QUIZ.length}</p><p class="prose">${qscore/QUIZ.length>=0.85?'Strong. You’ve got this chapter.':qscore/QUIZ.length>=0.6?'Solid. Look back at the pages behind the ones you missed.':'Worth another read of the chapter, then retake it.'}</p><p class="small">Best so far: ${S.bestBy[S.ch]}/${QUIZ.length}</p><div class="row" style="margin-top:16px"><button class="btn" id="qagain">Retake quiz</button></div>`;
+    const nextCh=CHAPTERS[CHAPTERS.findIndex(c=>c.id===S.ch)+1];
+    box.innerHTML=`<p class="small">Your score</p><p class="score">${qscore}/${QUIZ.length}</p><p class="prose">${qscore/QUIZ.length>=0.85?'Strong. You’ve got this chapter.':qscore/QUIZ.length>=0.6?'Solid. Look back at the pages behind the ones you missed.':'Worth another read of the chapter, then retake it.'}</p><p class="small">Best so far: ${S.bestBy[S.ch]}/${QUIZ.length}</p><div class="row" style="margin-top:16px">${nextCh?`<button class="btn" id="qnextch"></button>`:''}<button class="btn${nextCh?' quiet':''}" id="qagain">Retake quiz</button></div>`;
     document.getElementById('qagain').onclick=()=>{qi=0;qscore=0;renderQuiz();};
+    // Finishing a chapter leads on to the next one, starting at its preview.
+    if(nextCh){ const b=document.getElementById('qnextch'); b.textContent=`Next: ${nextCh.label}`; b.onclick=()=>{ setChapter(nextCh.id); show('preview'); }; }
     return;
   }
   const it=QUIZ[qi]; qanswered=false;
