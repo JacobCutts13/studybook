@@ -92,10 +92,13 @@ export function PageDrop({ state }: { state: PageState }) {
 
     let last = stateRef.current;
     let changedAt = performance.now();
+    // A failed upload unbinds back to text that's already written.
+    let rewrite = true;
     let frame = 0;
     const tick = (now: number) => {
       const current = stateRef.current;
       if (current !== last) {
+        rewrite = last !== "binding";
         last = current;
         changedAt = now;
       }
@@ -114,7 +117,7 @@ export function PageDrop({ state }: { state: PageState }) {
           ty = text[i * 2 + 1];
           alpha = 0.75;
           // Lines fill from the top, like writing.
-          if (!reduced && since < ty * 0.9) {
+          if (!reduced && rewrite && since < ty * 0.9) {
             tx = blank[i * 2];
             ty = blank[i * 2 + 1];
             alpha = edge[i] ? 0.5 : 0.12;
@@ -124,10 +127,11 @@ export function PageDrop({ state }: { state: PageState }) {
           ty = spine[i * 2 + 1];
           alpha = 0.95;
           k *= 1.6;
-          // Once bound, the spine lifts off towards the library.
-          const lift = reduced ? 0 : Math.max(0, since - 0.35);
+          // Once bound, the spine lifts off towards the library, gone
+          // before BIND_MS so the page change doesn't cut it off.
+          const lift = reduced ? 0 : Math.max(0, since - 0.3);
           ty -= lift * lift * 4;
-          alpha *= Math.max(0, 1 - lift * 2.5);
+          alpha *= Math.max(0, 1 - lift * 3);
         } else {
           tx = blank[i * 2];
           ty = blank[i * 2 + 1];
