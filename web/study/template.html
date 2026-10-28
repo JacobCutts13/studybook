@@ -819,13 +819,6 @@ document.addEventListener('keydown',e=>{
 });
 document.getElementById('nimport').onchange=e=>{ const f=e.target.files[0]; if(f) importNotes(f); e.target.value=''; };
 
-/* ---------- Reset ---------- */
-const resetBtn=document.getElementById('reset'); if(resetBtn) resetBtn.onclick=()=>{
-  if(!confirm('Clear your study progress? Your PDF and your notes stay.'))return;
-  S=JSON.parse(JSON.stringify(defaults)); setChapter(1); save(); paintDone(); qi=0;qscore=0;
-  renderQuiz(); show('preview');
-};
-
 /* ---------- Init ---------- */
 const chapSel=document.getElementById('chapsel');
 CHAPTERS.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=chLabel(c); chapSel.appendChild(o); });
