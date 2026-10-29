@@ -18,9 +18,12 @@ http://127.0.0.1:4747. Everything is driven from the command line; you never nee
 3. **Find the PDFs** in the place the user named (for example `~/Downloads`). Ask if it's
    unclear which files they mean, and don't search their whole disk. Only use books they're
    allowed to use. You don't need to copy anything: `add` copies each PDF into `~/.studybook`.
-4. **Write the "about"**: one or two sentences on the user's work (role, company, product, the
-   decisions they make) and their spelling conventions. It shapes the quiz scenarios. Use work
-   context only, never sensitive personal details. Tell the user what you used.
+4. **Write the "about"** from what you already know about the user: their memory, CLAUDE.md
+   files and this conversation. Don't ask them to fill it in. Write one or two sentences on their
+   work (role, company, product, the decisions they make) and their spelling conventions. It
+   shapes the quiz scenarios, and it's remembered for books added later in the browser, which
+   has no "about" field. Use work context only, never sensitive personal details. Tell the
+   user what you used.
 5. **Make the guides.** Run this in the background, because it takes a few minutes per book:
    ```bash
    pnpm studybook add ~/Downloads/book-one.pdf ~/Downloads/book-two.pdf --about "…"

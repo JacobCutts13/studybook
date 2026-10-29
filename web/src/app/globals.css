@@ -127,35 +127,11 @@ h2 {
   display: grid;
   gap: 20px;
 }
-/* Form field */
-.field {
-  display: grid;
-  gap: 8px;
-}
-.field-label {
-  font-weight: var(--bold);
-}
 .hint {
   color: var(--text-2);
   font-size: 12px;
   line-height: 16px;
   margin: 0;
-}
-textarea {
-  width: 100%;
-  min-height: 72px;
-  padding: 8px 12px;
-  border: 1px solid var(--border-2);
-  border-radius: 4px;
-  background: var(--bg-1);
-  resize: vertical;
-  transition: border-color var(--base) ease-in-out;
-}
-textarea:hover {
-  border-color: var(--border-3);
-}
-textarea::placeholder {
-  color: var(--text-2);
 }
 .actions {
   display: flex;
@@ -748,10 +724,10 @@ main:not(.hero) {
 }
 
 /* Create: a blank page in dots is the file drop. */
+/* One column: the page, then the action that binds it. */
 .create-form {
-  grid-template-columns: 200px minmax(0, 1fr);
-  gap: 32px;
-  align-items: start;
+  grid-template-columns: 200px;
+  gap: 24px;
   padding: 0;
 }
 /* The page floats like the books in the library. */
@@ -762,13 +738,6 @@ main:not(.hero) {
   .drop {
     animation: none;
   }
-}
-.create-fields {
-  display: grid;
-  gap: 20px;
-}
-.create-fields textarea {
-  min-height: 160px;
 }
 .page-drop {
   position: relative;
@@ -832,13 +801,4 @@ main:not(.hero) {
 }
 .page-drop[data-state="binding"] .page-drop-label {
   opacity: 0;
-}
-@media (max-width: 560px) {
-  .create-form {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .page-drop {
-    width: 200px;
-    justify-self: center;
-  }
 }

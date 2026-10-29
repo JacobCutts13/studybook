@@ -1,13 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import {
-  type DragEvent,
-  type FormEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { type DragEvent, type FormEvent, useRef, useState } from "react";
 import { PlusIcon } from "../icons";
 import { PageDrop, type PageState } from "./page-drop";
 
@@ -16,7 +10,6 @@ const BIND_MS = 700;
 
 export default function Create() {
   const router = useRouter();
-  const [profile, setProfile] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [fileName, setFileName] = useState("");
@@ -29,12 +22,6 @@ export default function Create() {
       : fileName
         ? "filled"
         : "blank";
-
-  useEffect(() => {
-    fetch("/api/books")
-      .then((response) => response.json())
-      .then((data) => setProfile(data.profile));
-  }, []);
 
   async function upload(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -132,32 +119,15 @@ export default function Create() {
             </span>
           </label>
         </div>
-        <div className="create-fields">
-          <div className="field">
-            <label htmlFor="profile" className="field-label">
-              About you
-            </label>
-            <textarea
-              id="profile"
-              name="profile"
-              value={profile}
-              onChange={(event) => setProfile(event.target.value)}
-              placeholder="e.g. I’m a product manager at a B2B software company, working on onboarding and pricing."
-            />
-            <p className="hint">
-              Quiz scenarios come from your work. Remembered for next time.
+        <div className="actions">
+          <button className="btn" type="submit" disabled={busy}>
+            {busy ? "Uploading…" : "Make study guide"}
+          </button>
+          {error && (
+            <p className="error" role="alert">
+              {error}
             </p>
-          </div>
-          <div className="actions">
-            <button className="btn" type="submit" disabled={busy}>
-              {busy ? "Uploading…" : "Make study guide"}
-            </button>
-            {error && (
-              <p className="error" role="alert">
-                {error}
-              </p>
-            )}
-          </div>
+          )}
         </div>
       </form>
     </main>

@@ -81,7 +81,6 @@ before(async () => {
     new Blob([await readFile(pdf)], { type: "application/pdf" }),
     "sample-book.pdf",
   );
-  form.append("profile", "A product manager at a software company.");
   const { id } = await (
     await fetch(`${base}/api/books`, { method: "POST", body: form })
   ).json();
