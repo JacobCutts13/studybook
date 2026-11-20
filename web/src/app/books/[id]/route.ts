@@ -1,16 +1,14 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { bookDir, REPO_ROOT, readJson } from "@/lib/books";
+import { REPO_ROOT, readBook } from "@/lib/books";
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const id = (await params).id;
-  const dir = bookDir(id);
-  const book =
-    dir && (await readJson<{ title: string }>(join(dir, "book.json")));
-  if (!book) return new Response("This book isn’t ready yet.", { status: 404 });
+  const book = await readBook(id);
+  if (!book) return new Response("Not found", { status: 404 });
   const escapeHtml = (text: string) =>
     text.replace(/&/g, "&amp;").replace(/</g, "&lt;");
   const template = await readFile(

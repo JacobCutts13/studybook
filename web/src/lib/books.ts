@@ -43,3 +43,19 @@ export const listBooks = books.listBooks as () => Promise<BookSummary[]>;
 export const startWorker = (dir: string) => books.startWorker(dir, WORKER);
 export const createBook = (pdf: Buffer, filename: string, profile: string) =>
   books.createBook({ pdf, filename, profile, worker: WORKER });
+
+// The book as far as it's written. Until the worker finds the chapters, the
+// whole PDF reads as one chapter (its end is filled in by the study page).
+export async function readBook(id: string) {
+  const dir = bookDir(id);
+  if (!dir) return null;
+  const book = await readJson<{ title: string }>(join(dir, "book.json"));
+  if (book) return book;
+  const job = await readJson<{ filename: string }>(join(dir, "job.json"));
+  return (
+    job && {
+      title: job.filename.replace(/\.pdf$/i, ""),
+      chapters: [{ id: -1, label: "Whole book", start: 1, end: 0 }],
+    }
+  );
+}

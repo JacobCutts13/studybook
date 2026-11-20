@@ -444,7 +444,7 @@ textarea:focus-visible{border-radius:4px}
 /* ---------- State ---------- */
 const KEY = '__SLUG__:v1';
 const API = '/api/books/__BOOK_ID__';
-const BOOK=/*__BOOK_JSON__*/null;
+let BOOK=/*__BOOK_JSON__*/null;
 const defaults = {done:{}, page:BOOK.chapters[0].start, maxPage:BOOK.chapters[0].start, quizBest:null, ch:BOOK.chapters[0].id, pp:{}, doneBy:{}, bestBy:{}};
 let S;
 try { S = Object.assign(JSON.parse(JSON.stringify(defaults)), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch(e){ S = JSON.parse(JSON.stringify(defaults)); }
@@ -496,8 +496,16 @@ document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>show(b.dataset.tab));
 document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>{ if(b.dataset.complete) complete(b.dataset.complete); show(b.dataset.goto); }));
 
 /* ---------- Reader ---------- */
-// While the book is still being written, a chapter without a quiz is read-only.
-const CHAPTERS=BOOK.chapters.map(c=>({id:c.id,label:c.label,start:c.start,end:c.end,built:!!c.quiz}));
+// While Claude is still writing, a chapter without a quiz is read-only, and
+// until it finds the chapters the whole PDF is one chapter with no known end.
+let CHAPTERS=[], CONTENT={}, pdfPages=0;
+function loadBook(book){
+  BOOK=book;
+  CHAPTERS=book.chapters.map(c=>({id:c.id,label:c.label,start:c.start,end:c.end||pdfPages||Infinity,built:!!c.quiz}));
+  CONTENT={}; book.chapters.forEach(c=>{ CONTENT[c.id]={summary:c.summary,think:c.think,quiz:c.quiz}; });
+}
+loadBook(BOOK);
+function chapterAt(page){ return CHAPTERS.find(c=>page>=c.start&&page<=c.end)||CHAPTERS[0]; }
 let START=CHAPTERS[0].start, END=CHAPTERS[0].end, curTab='preview';
 function cur(){ return CHAPTERS.find(c=>c.id===S.ch)||CHAPTERS[0]; }
 function chLabel(c){ return c.label; }
@@ -529,6 +537,7 @@ async function openPdf(buf){
     if(!window.pdfjsLib) throw new Error('viewer');
     pdfjsLib.GlobalWorkerOptions.workerSrc='/vendor/pdf.worker.min.js';
     pdfDoc = await pdfjsLib.getDocument({data:new Uint8Array(buf.slice(0))}).promise;
+    pdfPages=pdfDoc.numPages; CHAPTERS.forEach(c=>{ if(c.end===Infinity) c.end=pdfPages; }); END=cur().end;
     err.hidden=true;
     document.getElementById('reader').hidden=false;
     renderPage(); notesChanged();
@@ -602,7 +611,6 @@ document.addEventListener('keydown',e=>{
 let rz; window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(renderPage,200);});
 
 /* ---------- Quiz ---------- */
-const CONTENT={}; BOOK.chapters.forEach(c=>{ CONTENT[c.id]={summary:c.summary,think:c.think,quiz:c.quiz}; });
 let QUIZ=CONTENT[CHAPTERS[0].id].quiz||[];
 let qi=0, qscore=0, qanswered=false;
 function renderQuiz(){
@@ -647,7 +655,7 @@ async function syncNotes(changes){
   try{
     const r=await fetch(API+'/notes',{method:changes?'PUT':'GET',headers:{'content-type':'application/json'},body:changes?JSON.stringify(changes):undefined});
     if(!r.ok) throw new Error();
-    NOTES=(await r.json()).filter(n=>!n.deleted); notesChanged();
+    NOTES=(await r.json()).filter(n=>!n.deleted); notesChanged(); rehomeNotes();
   }catch(e){ toast('Couldn’t save your notes. Check studybook is still running.'); }
 }
 function upsertNote(n){
@@ -825,19 +833,50 @@ document.getElementById('nimport').onchange=e=>{ const f=e.target.files[0]; if(f
 
 /* ---------- Init ---------- */
 const chapSel=document.getElementById('chapsel');
-CHAPTERS.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=chLabel(c); chapSel.appendChild(o); });
 chapSel.onchange=e=>{ setChapter(+e.target.value); show(cur().built||curTab==='notes'?curTab:'read'); };
 const chapMarks=document.getElementById('chapmarks');
-CHAPTERS.forEach(c=>{ const b=document.createElement('button'); b.type='button'; b.dataset.ch=c.id; b.onclick=()=>{ setChapter(c.id); show(curTab); }; chapMarks.appendChild(b); });
+function paintChapters(){
+  chapSel.replaceChildren(); chapMarks.replaceChildren();
+  CHAPTERS.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=chLabel(c); chapSel.appendChild(o); });
+  CHAPTERS.forEach(c=>{ const b=document.createElement('button'); b.type='button'; b.dataset.ch=c.id; b.onclick=()=>{ setChapter(c.id); show(curTab); }; chapMarks.appendChild(b); });
+  chapSel.value=S.ch;
+}
+paintChapters();
+// Notes made before the chapters were found move to the chapter with their page.
+function rehomeNotes(){
+  const moved=NOTES.filter(n=>!CHAPTERS.some(c=>c.id===n.ch)).map(n=>({...n,ch:chapterAt(n.page).id,updated:Date.now()}));
+  if(moved.length) syncNotes(moved.map(clean));
+}
+// While Claude writes, pick up the chapters and each guide as it's finished,
+// without moving the reader off the page they're on.
+async function refreshBook(){
+  if(BOOK.chapters.every(c=>c.quiz)) return;
+  const book=await fetch(API+'/book').then(r=>r.ok?r.json():null).catch(()=>null);
+  setTimeout(refreshBook,4000);
+  if(book&&JSON.stringify(book)!==JSON.stringify(BOOK)){
+    const wasBuilt=cur().built, page=S.page;
+    loadBook(book); paintChapters();
+    document.querySelector('.book').textContent=book.title; document.title=`Learn ${book.title}`;
+    const found=CHAPTERS.some(c=>c.id===S.ch);
+    if(!found||!wasBuilt) setChapter(found?S.ch:chapterAt(page).id);
+    if(!found){ S.page=Math.min(END,Math.max(START,page)); S.maxPage=Math.max(S.maxPage,S.page); save(); }
+    paintDone(); rehomeNotes();
+    if(!found&&curTab==='read') renderPage();
+    if(!wasBuilt&&cur().built){
+      if(curTab==='preview'||curTab==='quiz') show(curTab); else toast('This chapter’s preview and quiz are ready.');
+    }
+    if(curTab==='notes') renderNotes();
+  }
+}
 document.getElementById('soonread').onclick=()=>show('read');
 // Draw straight away from this browser's copy, then switch to the saved
 // progress in the book folder if it's different (e.g. a new browser).
 function start(){
-  if(!CHAPTERS.some(c=>c.id===S.ch)) S.ch=CHAPTERS[0].id;
+  if(!CHAPTERS.some(c=>c.id===S.ch)) S.ch=chapterAt(S.page).id;
   setChapter(S.ch); paintNotesPanel(); paintDone(); renderQuiz();
   show(curTab==='preview'?(location.hash||'#preview').slice(1):curTab);
 }
-start(); syncNotes();
+start(); syncNotes(); setTimeout(refreshBook,4000);
 fetch(API+'/progress').then(r=>r.ok?r.json():null).catch(()=>null).then(saved=>{
   if(!saved||saved.ch===undefined||JSON.stringify(saved)===JSON.stringify(S)) return;
   S=Object.assign(JSON.parse(JSON.stringify(defaults)),saved);

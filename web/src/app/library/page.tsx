@@ -11,14 +11,12 @@ const OPEN_MS = 520;
 // The library floats in space: each book is a spine you can pull out. Its width
 // follows the chapter count and its marks show progress, one per chapter:
 // written chapters while Claude works, finished chapters once you study.
-// Pulling a book turns it to its cover and opens it, once its chapters are
-// found.
+// Pulling a book turns it to its cover and opens it, even while Claude is
+// still writing its guide.
 
 // Before Claude finds the real title, show the file name without its extension.
 const title = (book: BookSummary) =>
   book.title ?? book.filename.replace(/\.pdf$/i, "");
-// Once the chapters are found, a book can be read while the rest is written.
-const readable = (book: BookSummary) => Boolean(book.chapters?.length);
 const finished = (book: BookSummary) =>
   Object.values(book.studied ?? {}).filter((steps) => steps >= STEPS).length;
 
@@ -95,7 +93,7 @@ function Spine({
     onMouseEnter: onSelect,
     onFocus: onSelect,
   };
-  return readable(book) ? (
+  return (
     <a
       {...props}
       href={`/books/${book.id}`}
@@ -104,15 +102,6 @@ function Spine({
     >
       {faces}
     </a>
-  ) : (
-    <button
-      {...props}
-      type="button"
-      aria-label={`${title(book)}, ${summary(book)}`}
-      onClick={onSelect}
-    >
-      {faces}
-    </button>
   );
 }
 
@@ -245,15 +234,13 @@ export default function Library() {
               <p className="book-title">{title(detail)}</p>
               <p className="phase">{summary(detail)}</p>
             </div>
-            {readable(detail) && (
-              <a
-                className="btn"
-                href={`/books/${detail.id}`}
-                onClick={(event) => open(detail, event)}
-              >
-                {detail.status === "done" ? "Study" : "Start reading"}
-              </a>
-            )}
+            <a
+              className="btn"
+              href={`/books/${detail.id}`}
+              onClick={(event) => open(detail, event)}
+            >
+              {detail.status === "done" ? "Study" : "Start reading"}
+            </a>
             {detail.status === "error" && (
               <button
                 className="btn quiet"
