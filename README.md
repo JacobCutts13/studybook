@@ -55,7 +55,7 @@ Add `--no-wait` to `add` or `retry` to return straight away. Each command exits 
 
 ### In the browser
 
-Run `pnpm dev` and open http://127.0.0.1:4747. Press **Create**, choose a PDF, and press **Make study guide**. Quiz scenarios use the last `--about` an agent gave, so books added here are tailored too. The **Library** shows each chapter's progress, and **Study** appears when it's ready.
+Run `pnpm dev` and open http://127.0.0.1:4747. Press **Create**, choose a PDF, and press **Make study guide**. Quiz scenarios use the last `--about` an agent gave, so books added here are tailored too. The **Library** shows each chapter's progress. Once the chapters are found you can **Start reading**, and each chapter's preview and quiz appear as they're written (refresh to pick up new ones).
 
 ## How it works
 

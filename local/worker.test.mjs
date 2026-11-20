@@ -97,3 +97,19 @@ test("retries an invalid chapter with its errors, then resumes without redoing w
     "a re-run with valid files calls Claude 0 more times",
   );
 });
+
+test("the book is readable before every chapter is written", async () => {
+  const dir = await bookFolder();
+  const first = await runWorker(dir, { FAKE_CLAUDE_BAD: "1" });
+  assert.equal(first.state.status, "error");
+  const partial = await first.read("book.json");
+  assert.equal(partial.chapters[1].quiz, undefined, "chapter 1 isn't ready");
+  assert.ok(
+    partial.chapters.every((c, i) => i === 1 || c.quiz),
+    "the other chapters are",
+  );
+
+  const again = await runWorker(dir);
+  assert.equal(again.state.status, "done");
+  assert.ok((await again.read("book.json")).chapters.every((c) => c.quiz));
+});

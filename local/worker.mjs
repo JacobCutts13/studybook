@@ -138,14 +138,61 @@ try {
     throw new Error(`Couldn’t find the chapters: ${outlineErrors.join("; ")}`);
   const outline = await readJson("outline.json");
 
-  const chapters = outline.chapters.map((c) => ({
-    id: c.id,
-    label: c.label,
-    status: "waiting",
-  }));
-  const setChapter = (id, patch) => {
+  // summary and e are shown as HTML, and Claude wrote them from untrusted
+  // book text, so escape them and allow only <mark>.
+  const escapeHtml = (text) =>
+    text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const quote = (content) => ({
+    summary: escapeHtml(smartQuotes(content.summary)).replace(
+      /&lt;(\/?)mark&gt;/g,
+      "<$1mark>",
+    ),
+    think: content.think.map(smartQuotes),
+    quiz: content.quiz.map((q) => ({
+      p: smartQuotes(q.p),
+      o: q.o.map(smartQuotes),
+      a: q.a,
+      e: escapeHtml(smartQuotes(q.e)),
+    })),
+  });
+  // book.json is written as soon as the chapters are known and again as each
+  // one is finished, so the book can be read while the rest are written.
+  let bookWrite = Promise.resolve();
+  const writeBook = (chapters) => {
+    bookWrite = bookWrite.then(async () => {
+      const book = {
+        title: outline.title,
+        numPages: pages.length,
+        chapters: await Promise.all(
+          outline.chapters.map(async (c, i) => ({
+            id: c.id,
+            label: c.label,
+            start: c.start,
+            end: c.end,
+            ...(chapters[i].status === "done" &&
+              quote(await readJson(`chapters/${c.id}.json`))),
+          })),
+        ),
+      };
+      const path = join(dir, "book.json");
+      await writeFile(`${path}.tmp`, JSON.stringify(book, null, 1));
+      await rename(`${path}.tmp`, path);
+    });
+    return bookWrite;
+  };
+
+  // On a retry, chapters written last time stay readable from the start.
+  const chapters = await Promise.all(
+    outline.chapters.map(async (c) => {
+      const content = await readJson(`chapters/${c.id}.json`);
+      const done = content && !validateChapter(content, runs).length;
+      return { id: c.id, label: c.label, status: done ? "done" : "waiting" };
+    }),
+  );
+  const setChapter = async (id, patch) => {
     const i = chapters.findIndex((c) => c.id === id);
     chapters[i] = { ...chapters[i], ...patch };
+    if (patch.status === "done") await writeBook(chapters);
     const done = chapters.filter((c) => c.status === "done").length;
     return update({
       title: outline.title,
@@ -153,9 +200,12 @@ try {
       phase: `Writing chapters (${done} of ${chapters.length} done)`,
     });
   };
+  await writeBook(chapters);
   await update({ title: outline.title, chapters });
 
-  const queue = [...outline.chapters];
+  const queue = outline.chapters.filter(
+    (_, i) => chapters[i].status !== "done",
+  );
   const concurrency = Number(process.env.STUDYBOOK_CONCURRENCY) || 2;
   await Promise.all(
     Array.from({ length: concurrency }, async () => {
@@ -194,37 +244,6 @@ try {
       `${failed.length} chapter${failed.length > 1 ? "s" : ""} couldn’t be written. Retry to redo only those.`,
     );
 
-  // summary and e are shown as HTML, and Claude wrote them from untrusted
-  // book text, so escape them and allow only <mark>.
-  const escapeHtml = (text) =>
-    text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const quote = (content) => ({
-    summary: escapeHtml(smartQuotes(content.summary)).replace(
-      /&lt;(\/?)mark&gt;/g,
-      "<$1mark>",
-    ),
-    think: content.think.map(smartQuotes),
-    quiz: content.quiz.map((q) => ({
-      p: smartQuotes(q.p),
-      o: q.o.map(smartQuotes),
-      a: q.a,
-      e: escapeHtml(smartQuotes(q.e)),
-    })),
-  });
-  const book = {
-    title: outline.title,
-    numPages: pages.length,
-    chapters: await Promise.all(
-      outline.chapters.map(async (c) => ({
-        id: c.id,
-        label: c.label,
-        start: c.start,
-        end: c.end,
-        ...quote(await readJson(`chapters/${c.id}.json`)),
-      })),
-    ),
-  };
-  await writeFile(join(dir, "book.json"), JSON.stringify(book, null, 1));
   await update({ status: "done", phase: "Ready to study" });
 } catch (error) {
   await update({

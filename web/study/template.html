@@ -496,7 +496,8 @@ document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>show(b.dataset.tab));
 document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>{ if(b.dataset.complete) complete(b.dataset.complete); show(b.dataset.goto); }));
 
 /* ---------- Reader ---------- */
-const CHAPTERS=BOOK.chapters.map(c=>({id:c.id,label:c.label,start:c.start,end:c.end,built:true}));
+// While the book is still being written, a chapter without a quiz is read-only.
+const CHAPTERS=BOOK.chapters.map(c=>({id:c.id,label:c.label,start:c.start,end:c.end,built:!!c.quiz}));
 let START=CHAPTERS[0].start, END=CHAPTERS[0].end, curTab='preview';
 function cur(){ return CHAPTERS.find(c=>c.id===S.ch)||CHAPTERS[0]; }
 function chLabel(c){ return c.label; }
@@ -511,11 +512,13 @@ function setChapter(id){
   document.getElementById('readlede').textContent=`Shows ${c.label}, book pages ${START} to ${END}, from your own copy.`;
   document.getElementById('soontitle').textContent=chLabel(c);
   const ct=CONTENT[c.id];
+  if(c.built){
   document.getElementById('pvsummary').innerHTML=ct.summary;
   const th=document.getElementById('pvthink'); th.innerHTML='';
   ct.think.forEach((t,k)=>{ const li=document.createElement('li'); if(k<ct.think.length-1) li.style.marginBottom='8px'; li.textContent=t; th.appendChild(li); });
   document.getElementById('pvnext').textContent=`Next: read book pages ${START}–${END}.`;
   if(typeof qi!=='undefined'){ QUIZ=ct.quiz; qi=0; qscore=0; renderQuiz(); }
+  }
   if(typeof NOTES!=='undefined') renderReadNotes();
   paintDone();
 }
@@ -600,9 +603,10 @@ let rz; window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(ren
 
 /* ---------- Quiz ---------- */
 const CONTENT={}; BOOK.chapters.forEach(c=>{ CONTENT[c.id]={summary:c.summary,think:c.think,quiz:c.quiz}; });
-let QUIZ=CONTENT[CHAPTERS[0].id].quiz;
+let QUIZ=CONTENT[CHAPTERS[0].id].quiz||[];
 let qi=0, qscore=0, qanswered=false;
 function renderQuiz(){
+  if(!cur().built) return;
   const box=document.getElementById('quizbox');
   if(qi>=QUIZ.length){
     const pb=S.bestBy[S.ch]; if(pb===undefined||pb===null||qscore>pb){S.bestBy[S.ch]=qscore;}

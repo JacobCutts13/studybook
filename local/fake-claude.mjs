@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Stand-in for `claude -p` in tests. Writes plausible output for the sample
 // book and records its arguments. FAKE_CLAUDE_BAD_ONCE=<chapter id> makes the
-// first attempt at that chapter invalid, to exercise the retry loop.
+// first attempt at that chapter invalid, to exercise the retry loop, and
+// FAKE_CLAUDE_BAD=<chapter id> makes every attempt invalid.
 import { appendFile, readFile, writeFile } from "node:fs/promises";
 
 const args = process.argv.slice(2);
@@ -25,8 +26,9 @@ if (prompt.includes("Write outline.json")) {
 } else {
   const id = Number(prompt.match(/chapters\/(\d+)\.json/)[1]);
   const bad =
-    process.env.FAKE_CLAUDE_BAD_ONCE === String(id) &&
-    !prompt.includes("had these problems");
+    process.env.FAKE_CLAUDE_BAD === String(id) ||
+    (process.env.FAKE_CLAUDE_BAD_ONCE === String(id) &&
+      !prompt.includes("had these problems"));
   const quiz = Array.from({ length: bad ? 2 : 4 }, (_, n) => ({
     p: `Scenario ${n + 1} for chapter ${id}: what's the sensible next step?`,
     o: [
